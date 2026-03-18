@@ -1484,7 +1484,29 @@ window.addEventListener('load', () => {
   initMap();
   renderList(bars);
   initBottomSheet();
+  initZoomLock();
 });
+
+// ── BLOCK PINCH-ZOOM OUTSIDE MAP ──
+function initZoomLock() {
+  document.addEventListener('touchmove', function(e) {
+    if (e.touches.length > 1) {
+      // Allow pinch inside #map
+      if (e.target.closest('#map')) return;
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  document.addEventListener('gesturestart', function(e) {
+    if (e.target.closest('#map')) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('gesturechange', function(e) {
+    if (e.target.closest('#map')) return;
+    e.preventDefault();
+  }, { passive: false });
+}
 
 // ── MOBILE BOTTOM SHEET ──
 function initBottomSheet() {
