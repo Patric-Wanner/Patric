@@ -882,8 +882,7 @@
   <div class="modal">
     <button class="btn-close" onclick="closeModal()">✕</button>
     <h2>Lägg till bar</h2>
-    <form id="barForm" name="ny-bar" method="POST" data-netlify="true" netlify onsubmit="return submitBar(event)">
-      <input type="hidden" name="form-name" value="ny-bar" />
+    <form id="barForm" name="ny-bar" method="POST" onsubmit="return submitBar(event)">
       <div class="form-group">
         <label>Barens namn</label>
         <input type="text" name="namn" id="formName" placeholder="Dartkartan" required />
@@ -1516,15 +1515,16 @@ function submitBar(e) {
   const city = document.getElementById('formCity').value.trim();
   if (!name || !city) { alert('Fyll i namn och stad!'); return false; }
 
-  // Skicka via Netlify Forms
-  fetch('/', {
+  // Skicka via Formspree
+  fetch('https://formspree.io/f/mpqyknrp', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(new FormData(form)).toString()
-  }).then(() => {
-    alert(`Tack! "${name}" i ${city} har skickats in för granskning. 🎯\n\nVi lägger till den på kartan så snart den är verifierad.`);
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(Object.fromEntries(new FormData(form)))
+  }).then(r => {
+    if (r.ok) alert(`Tack! "${name}" i ${city} har skickats in för granskning. 🎯\n\nVi lägger till den på kartan så snart den är verifierad.`);
+    else alert(`Tack! "${name}" i ${city} har registrerats. 🎯`);
   }).catch(() => {
-    alert(`Tack! "${name}" i ${city} har registrerats. 🎯`);
+    alert(`Något gick fel. Försök igen!`);
   });
 
   closeModal();
