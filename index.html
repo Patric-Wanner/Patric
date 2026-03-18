@@ -1499,16 +1499,17 @@ window.addEventListener('load', () => {
   initZoomLock();
 });
 
-// ── BLOCK PINCH-ZOOM OUTSIDE MAP ──
+// ── BLOCK ZOOM OUTSIDE MAP ──
 function initZoomLock() {
+  // Block pinch zoom
   document.addEventListener('touchmove', function(e) {
     if (e.touches.length > 1) {
-      // Allow pinch inside #map
       if (e.target.closest('#map')) return;
       e.preventDefault();
     }
   }, { passive: false });
 
+  // Block gesture zoom (iOS)
   document.addEventListener('gesturestart', function(e) {
     if (e.target.closest('#map')) return;
     e.preventDefault();
@@ -1517,6 +1518,22 @@ function initZoomLock() {
   document.addEventListener('gesturechange', function(e) {
     if (e.target.closest('#map')) return;
     e.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('gestureend', function(e) {
+    if (e.target.closest('#map')) return;
+    e.preventDefault();
+  }, { passive: false });
+
+  // Block double-tap zoom
+  let lastTap = 0;
+  document.addEventListener('touchend', function(e) {
+    if (e.target.closest('#map')) return;
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      e.preventDefault();
+    }
+    lastTap = now;
   }, { passive: false });
 }
 
