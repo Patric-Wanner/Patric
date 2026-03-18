@@ -754,19 +754,24 @@
 
 <header>
   <div class="logo">
-    <svg class="logo-icon" viewBox="0 0 36 40" fill="none">
+    <svg class="logo-icon" viewBox="0 0 44 40" fill="none">
       <!-- Map pin -->
-      <path d="M18 2C10.8 2 5 7.8 5 15c0 9 13 22 13 22s13-13 13-22c0-7.2-5.8-13-13-13z" fill="none" stroke="#e8ff47" stroke-width="2"/>
+      <path d="M16 2C8.8 2 3 7.8 3 15c0 9 13 22 13 22s13-13 13-22c0-7.2-5.8-13-13-13z" fill="none" stroke="#e8ff47" stroke-width="2"/>
       <!-- Pin hole (target) -->
-      <circle cx="18" cy="15" r="5" fill="none" stroke="#e8ff47" stroke-width="1.5"/>
-      <circle cx="18" cy="15" r="1.5" fill="#e8ff47"/>
-      <!-- Dart arrow coming from top-right -->
-      <line x1="32" y1="1" x2="20" y2="13" stroke="#e8ff47" stroke-width="2" stroke-linecap="round"/>
-      <!-- Dart flights (fins) -->
-      <line x1="32" y1="1" x2="28" y2="1" stroke="#e8ff47" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="32" y1="1" x2="32" y2="5" stroke="#e8ff47" stroke-width="1.5" stroke-linecap="round"/>
-      <!-- Dart tip -->
-      <circle cx="19.5" cy="13.5" r="1" fill="#e8ff47"/>
+      <circle cx="16" cy="15" r="4.5" fill="none" stroke="#e8ff47" stroke-width="1.5"/>
+      <circle cx="16" cy="15" r="1.5" fill="#e8ff47"/>
+      <!-- Dart — realistic silhouette, angled 30° from top-right towards pin center -->
+      <g transform="translate(17.5,13.5) rotate(-35)">
+        <!-- Tip (needle) -->
+        <polygon points="0,0 3,-0.5 3,0.5" fill="#e8ff47"/>
+        <!-- Barrel (thick tapered body) -->
+        <path d="M3,-1.2 L10,-1.5 L10,1.5 L3,1.2 Z" fill="#e8ff47"/>
+        <!-- Shaft (thin) -->
+        <rect x="10" y="-0.6" width="7" height="1.2" fill="#e8ff47" rx="0.3"/>
+        <!-- Flight (fins) -->
+        <path d="M17,-0.5 L22,-4 L22,-0.3 Z" fill="#e8ff47"/>
+        <path d="M17,0.5 L22,4 L22,0.3 Z" fill="#e8ff47"/>
+      </g>
     </svg>
     <span class="logo-text">DART<span>kartan</span></span>
   </div>
