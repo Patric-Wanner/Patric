@@ -1002,6 +1002,7 @@
         <div class="filter-chip city-chip" onclick="setCity('Eskilstuna', this)">Eskilstuna</div>
         <div class="filter-chip city-chip" onclick="setCity('Karlskoga', this)">Karlskoga</div>
         <div class="filter-chip city-chip" onclick="setCity('Karlstad', this)">Karlstad</div>
+        <div class="filter-chip city-chip" onclick="setCity('Borås', this)">Borås</div>
       </div>
     </div>
     <div class="results-label" id="resultsLabel">Visar alla barer</div>
@@ -1793,6 +1794,23 @@ const bars = [
     open:true, verified:false, beer:"49 kr",
     note:"7 bristoltavlor. Gratis att spela."
   },
+  // ── BORÅS ──
+  {
+    id:59, name:"Bowlers Borås", city:"Borås",
+    lat:57.7210, lng:12.9401,
+    address:"Lilla Brogatan 8, Borås", boards:11, price:"250 kr/h", priceType:"bana",
+    type:"Bristol Autoscoring (Scolia)", hours:"Tis–Ons 16–22, Tor 16–sent, Fre 16–01, Lör 12–01, Sön 12–20",
+    open:true, verified:false,
+    note:"11 bristoltavlor med Scolia autoscoring. Bowlers Dart Club: onsdagar kl 18–20, 50 kr/pers (inga förkunskaper behövs)."
+  },
+  {
+    id:60, name:"Lucky Bowl Borås", city:"Borås",
+    lat:57.7167, lng:12.9291,
+    address:"Bockasjögatan 2, Borås", boards:3, price:"300 kr/h", priceType:"bana",
+    type:"Bristol Autoscoring", hours:"Tis–Tor 12–21, Fre 14–23, Lör 12–23, Sön 12–18",
+    open:true, verified:false,
+    note:"3 bristoltavlor med autoscoring."
+  },
 
 ];
 
@@ -2001,6 +2019,7 @@ function setCity(city, el) {
     'Eskilstuna': [[59.371, 16.509], 13],
     'Karlskoga': [[59.327, 14.521], 13],
     'Karlstad': [[59.379, 13.504], 13],
+    'Borås': [[57.721, 12.940], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
