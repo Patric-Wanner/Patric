@@ -472,38 +472,60 @@
       .sidebar {
         width: 100%;
         position: fixed;
-        bottom: 0; left: 0; right: 0;
+        top: 48px; left: 0; right: 0; bottom: 0;
         z-index: 1100;
-        height: auto;
-        max-height: 70vh;
         border-right: none;
-        border-top: 1px solid var(--border);
-        border-radius: 16px 16px 0 0;
-        transform: translateY(calc(100% - 110px));
-        transition: transform 0.35s ease;
-        box-shadow: 0 -8px 30px rgba(0,0,0,0.5);
+        border-radius: 0;
+        display: none;
+        height: auto;
+        max-height: none;
       }
-      .sidebar.sheet-open { transform: translateY(0); }
-      .sidebar::before {
-        content: '';
+      .sidebar.sheet-open {
         display: block;
-        width: 36px;
-        height: 4px;
-        background: var(--muted);
-        border-radius: 2px;
-        margin: 8px auto 4px;
-        opacity: 0.5;
       }
+      .sidebar::before { display: none; }
 
       .sidebar-top { padding: 0.6rem 1rem 0.8rem; }
       .search-input { padding: 9px 14px 9px 36px; font-size: 0.85rem; }
       .filters { gap: 6px; margin-top: 8px; }
       .filter-chip { font-size: 0.72rem; padding: 3px 10px; }
       .results-label { padding: 0.4rem 1rem 0.2rem; }
-      .bar-list { max-height: 40vh; }
+      .bar-list { max-height: calc(100vh - 250px); }
       .bar-card { padding: 0.75rem; }
 
-      .btn-locate { bottom: 130px; right: 0.8rem; width: 42px; height: 42px; font-size: 1.1rem; }
+      /* Mobile toggle button */
+      .mobile-bar-toggle {
+        display: flex !important;
+        position: fixed;
+        bottom: 1rem; left: 50%; transform: translateX(-50%);
+        z-index: 1099;
+        background: var(--accent);
+        color: #0d0d0f;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 50px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+      }
+      .mobile-bar-toggle.hidden { display: none !important; }
+
+      /* Close button for mobile sidebar */
+      .mobile-close-sidebar {
+        display: block !important;
+        position: absolute;
+        top: 0.6rem; right: 1rem;
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-size: 1.5rem;
+        cursor: pointer;
+        z-index: 10;
+      }
+
+      .btn-locate { bottom: 4.5rem; right: 0.8rem; width: 42px; height: 42px; font-size: 1.1rem; }
 
       /* Scorer mobile */
       .dart-num { font-size: 1.1rem; padding: 8px 2px; }
@@ -845,6 +867,7 @@
 
 <div class="app">
   <aside class="sidebar">
+    <button class="mobile-close-sidebar" style="display:none" onclick="closeMobileSidebar()">✕</button>
     <div class="sidebar-top">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
@@ -890,6 +913,7 @@
     <button class="btn-locate" onclick="locateUser()" title="Hitta mig">📍</button>
   </div>
 </div>
+<button class="mobile-bar-toggle" style="display:none" id="mobileBarToggle" onclick="openMobileSidebar()">🎯 VISA BARER</button>
 
 <!-- ADD BAR MODAL -->
 <div class="modal-overlay" id="modalOverlay">
@@ -1716,7 +1740,7 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
 window.addEventListener('load', () => {
   initMap();
   renderList(bars);
-  initBottomSheet();
+  initMobileToggle();
   initZoomLock();
 });
 
@@ -1765,57 +1789,28 @@ function initZoomLock() {
 
 }
 
-// ── MOBILE BOTTOM SHEET ──
-function initBottomSheet() {
+// ── MOBILE SIDEBAR ──
+function openMobileSidebar() {
   const sidebar = document.querySelector('.sidebar');
-  if (!sidebar || window.innerWidth > 700) return;
-
-  let startY = 0, isDragging = false;
-
-  // Search input focus → open sheet
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('focus', () => {
-      sidebar.classList.add('sheet-open');
-    });
+  if (sidebar) {
+    sidebar.classList.add('sheet-open');
+    const btn = document.getElementById('mobileBarToggle');
+    if (btn) btn.classList.add('hidden');
   }
-
-  // Tap on sidebar area toggles sheet
-  sidebar.addEventListener('click', (e) => {
-    if (e.target.closest('.bar-card')) {
-      setTimeout(() => sidebar.classList.remove('sheet-open'), 300);
-      return;
-    }
-    if (e.target.closest('.filter-chip, .city-chip, .search-input')) {
-      // Filter/city chips should also open the sheet
-      if (!e.target.closest('.search-input')) {
-        sidebar.classList.add('sheet-open');
-      }
-      return;
-    }
-    // Tapping anywhere on the visible sidebar toggles it
-    sidebar.classList.toggle('sheet-open');
-  });
-
-  // Swipe up/down
-  sidebar.addEventListener('touchstart', (e) => {
-    const isOnScrollable = e.target.closest('.bar-list');
-    const isSheetOpen = sidebar.classList.contains('sheet-open');
-    if (!isSheetOpen || !isOnScrollable) {
-      startY = e.touches[0].clientY;
-      isDragging = true;
-    } else {
-      isDragging = false;
-    }
-  }, { passive: true });
-
-  sidebar.addEventListener('touchend', (e) => {
-    if (!isDragging) return;
-    isDragging = false;
-    const diff = e.changedTouches[0].clientY - startY;
-    if (diff < -40) sidebar.classList.add('sheet-open');
-    else if (diff > 40) sidebar.classList.remove('sheet-open');
-  }, { passive: true });
+}
+function closeMobileSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    sidebar.classList.remove('sheet-open');
+    const btn = document.getElementById('mobileBarToggle');
+    if (btn) btn.classList.remove('hidden');
+  }
+}
+function initMobileToggle() {
+  if (window.innerWidth <= 700) {
+    const btn = document.getElementById('mobileBarToggle');
+    if (btn) btn.style.display = 'flex';
+  }
 }
 
 // ══════════════════════════════════════════
