@@ -1889,8 +1889,33 @@ const GOOD_LEAVES = [50,40,32,36,24,20,16,8,12,4,2,38,34,30,28,26,22,18,14,10,6]
 
 function getCheckoutRaw(liveScore, dartsLeft) {
   if (liveScore <= 0 || liveScore > 170) return null;
-  if (outRule !== 'dubbel') {
-    if (dartsLeft >= 1 && liveScore <= 60) return 'S'+liveScore;
+  if (outRule === 'enkel') {
+    // Enkel ut: vilken pil som helst kan avsluta
+    if (dartsLeft >= 1 && liveScore <= 20) return 'S'+liveScore;
+    if (dartsLeft >= 1 && liveScore === 25) return 'S25';
+    if (dartsLeft >= 1 && liveScore === 50) return 'Bull';
+    if (dartsLeft >= 1 && liveScore <= 40 && liveScore % 2 === 0) return 'D'+(liveScore/2);
+    if (dartsLeft >= 1 && liveScore <= 60 && liveScore % 3 === 0) return 'T'+(liveScore/3);
+    if (dartsLeft >= 2) {
+      // Prova T + rest
+      for (let t = 20; t >= 1; t--) {
+        const rem = liveScore - t*3;
+        if (rem > 0 && rem <= 60) return 'T'+t+' S'+rem;
+        if (rem > 0 && rem <= 40 && rem % 2 === 0) return 'T'+t+' D'+(rem/2);
+      }
+      for (let s = 20; s >= 1; s--) {
+        const rem = liveScore - s;
+        if (rem > 0 && rem <= 20) return 'S'+s+' S'+rem;
+      }
+    }
+    if (dartsLeft >= 3) {
+      for (let t1 = 20; t1 >= 1; t1--) {
+        for (let t2 = 20; t2 >= 1; t2--) {
+          const rem = liveScore - t1*3 - t2*3;
+          if (rem > 0 && rem <= 60) return 'T'+t1+' T'+t2+' S'+rem;
+        }
+      }
+    }
     return null;
   }
   let co = CHECKOUTS[liveScore];
@@ -1950,7 +1975,8 @@ function getLeave(liveScore, dartsLeft) {
   let best = null;
   for (const t of allThrows) {
     const rem = liveScore - t.val;
-    if (rem <= 0 || rem === 1) continue; // can't leave 0 or 1 (no double)
+    if (rem <= 0) continue;
+    if (outRule === 'dubbel' && rem === 1) continue; // can't leave 1 with double out
     if (rem > 170) continue;
     // How good is this leave?
     const leaveIdx = GOOD_LEAVES.indexOf(rem);
