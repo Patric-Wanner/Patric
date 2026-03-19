@@ -1598,16 +1598,6 @@ function initZoomLock() {
     e.preventDefault();
   }, { passive: false });
 
-  // Block double-tap zoom
-  let lastTap = 0;
-  document.addEventListener('touchend', function(e) {
-    if (e.target.closest('#map')) return;
-    const now = Date.now();
-    if (now - lastTap < 300) {
-      e.preventDefault();
-    }
-    lastTap = now;
-  }, { passive: false });
 }
 
 // ── MOBILE BOTTOM SHEET ──
