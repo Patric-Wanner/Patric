@@ -329,6 +329,26 @@
     }
     .btn-locate:hover { transform: scale(1.08); }
 
+    .btn-theme {
+      position: absolute;
+      bottom: 5rem;
+      right: 1rem;
+      z-index: 999;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 42px; height: 42px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+    }
+    .btn-theme:hover { transform: scale(1.08); }
+
     /* STATS bar */
     .stats-bar {
       position: absolute;
@@ -914,6 +934,7 @@
     </div>
     <div id="map"></div>
     <button class="btn-locate" onclick="locateUser()" title="Hitta mig">📍</button>
+    <button class="btn-theme" onclick="toggleMapTheme()" id="themeToggle" title="Byt kartläge">☀️</button>
   </div>
 </div>
 <button class="mobile-bar-toggle" style="display:none" id="mobileBarToggle" onclick="openMobileSidebar()">🎯 VISA BARER</button>
@@ -940,8 +961,16 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Pris per timme</label>
+          <label>Pris</label>
           <input type="text" name="pris" id="formPrice" placeholder="Gratis / 20 kr" />
+        </div>
+        <div class="form-group">
+          <label>Pristyp</label>
+          <select name="pristyp" id="formPriceType">
+            <option value="bana">Per bana</option>
+            <option value="person">Per person</option>
+            <option value="gratis">Gratis</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Taveltyp</label>
@@ -1225,7 +1254,7 @@ const bars = [
   {
     id:6, name:"John Scotts Avenyn", city:"Göteborg",
     lat:57.7009, lng:11.9738,
-    address:"Kungsportsavenyen 15", boards:2, price:"150 kr/timme",
+    address:"Kungsportsavenyen 15", boards:2, price:"150 kr/timme", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Kontrollera på johnscotts.se/avenyn",
     open:true, verified:true, beer:"69 kr – Sofiero pint (56,8 cl)",
     note:"2 bristoltavlor med Scolia Pro självräkningssystem. 150 kr/timme. Öppet varje dag – fre & lör till 23:00. Pilar finns att hyra. Regelbundna dartturneringar!"
@@ -1249,7 +1278,7 @@ const bars = [
   {
     id:13, name:"Grace Avenyn", city:"Göteborg",
     lat:57.7011, lng:11.9733,
-    address:"Kungsportsavenyen 9", boards:3, price:"120 kr/h",
+    address:"Kungsportsavenyen 9", boards:3, price:"120 kr/h", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Kontrollera på gracesportsbar.se",
     open:true, verified:true, beer:"64 kr – Norrlands Guld",
     note:"3 bristoltavlor med Scolia självräkningssystem. 120 kr/timmen."
@@ -1257,7 +1286,7 @@ const bars = [
   {
     id:13, name:"Majorna Bowling", city:"Göteborg",
     lat:57.6986, lng:11.9393,
-    address:"Stigbergsliden 18", boards:3, price:"Sön–Tor 100 kr/h, Fre–Lör 150 kr/h",
+    address:"Stigbergsliden 18", boards:3, price:"Sön–Tor 100 kr/h, Fre–Lör 150 kr/h", priceType:"bana",
     type:"Bristoltavla", hours:"Mån–Tor 15–23:30, Fre 14–01, Lör 15–01, Sön 12–23:30",
     open:true, verified:false,
     note:"Göteborgs äldsta bowlinghall (sedan 1963) med 3 bristoltavlor. Restaurang Backen på plats. 20 års åldersgräns fre & lör efter 18:00."
@@ -1265,7 +1294,7 @@ const bars = [
   {
     id:1, name:"Oche Göteborg", city:"Göteborg",
     lat:57.7004, lng:11.9551,
-    address:"Norra Allégatan 5", boards:14, price:"ca 160 kr/pers",
+    address:"Norra Allégatan 5", boards:14, price:"ca 160 kr/pers", priceType:"person",
     type:"Elektronisk", hours:"Tis–Ons 16–23, Tor 16–00, Fre 16–01, Lör 15–01",
     open:true, verified:true,
     note:"Bokningsbas, 14 digitala banor. Studentrabatt tisdagar (50%)."
@@ -1273,7 +1302,7 @@ const bars = [
   {
     id:2, name:"Biljardpalatset", city:"Göteborg",
     lat:57.7039, lng:11.9611,
-    address:"Ekelundsgatan 11", boards:7, price:"50 kr/h per tavla",
+    address:"Ekelundsgatan 11", boards:7, price:"50 kr/h per tavla", priceType:"bana",
     type:"Elektronisk", hours:"Mån–Fre 11:30–00, Lör–Sön 12–00",
     open:true, verified:true,
     note:"7 elektroniska dartbanor. Drop-in, ingen bokning. AW halva priset 16–18."
@@ -1338,7 +1367,7 @@ const bars = [
   {
     id:22, name:"O'Learys Malmö", city:"Malmö",
     lat:55.6074, lng:13.0253,
-    address:"Fredsgatan 12, Malmö", boards:3, price:"200 kr/h",
+    address:"Fredsgatan 12, Malmö", boards:3, price:"200 kr/h", priceType:"bana",
     type:"Elektronisk", hours:"Kontrollera på olearys.se",
     open:true, verified:true,
     note:"3 digitala darttavlor. 200 kr/h för 2–4 personer per tavla. Stor sportsbar med mat och dryck."
@@ -1346,7 +1375,7 @@ const bars = [
   {
     id:23, name:"Big Bowl Malmö", city:"Malmö",
     lat:55.6074, lng:13.0205,
-    address:"Drottninggatan 1C, Malmö", boards:6, price:"200 kr/55 min",
+    address:"Drottninggatan 1C, Malmö", boards:6, price:"200 kr/55 min", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Kontrollera på bigbowl.se",
     open:true, verified:true,
     note:"6 bristoltavlor med autoscoring. 200 kr per bana i 55 minuter. Bowling, restaurang och bar på samma ställe."
@@ -1387,7 +1416,7 @@ const bars = [
   {
     id:27, name:"Stures Bowling", city:"Alingsås",
     lat:57.9262, lng:12.5256,
-    address:"Sveagatan 8G, Alingsås", boards:10, price:"180 kr/h",
+    address:"Sveagatan 8G, Alingsås", boards:10, price:"180 kr/h", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Kontakta stället",
     open:true, verified:false,
     note:"10 bristoltavlor med autoscoring. Bowling finns också."
@@ -1396,7 +1425,7 @@ const bars = [
   {
     id:28, name:"The Old House Inn", city:"Lysekil",
     lat:58.2742, lng:11.4340,
-    address:"Kungsgatan 36, Lysekil", boards:2, price:"25 kr/h",
+    address:"Kungsgatan 36, Lysekil", boards:2, price:"25 kr/h", priceType:"bana",
     type:"Bristoltavla", hours:"Mån–Sön 11–01",
     open:true, verified:false, beer:"89 kr",
     note:"2 bristoltavlor. Öppet varje dag 11–01."
@@ -1404,7 +1433,7 @@ const bars = [
   {
     id:29, name:"Sjökanten", city:"Lysekil",
     lat:58.2731, lng:11.4373,
-    address:"Södra Hamngatan 2, Lysekil", boards:3, price:"100 kr/h",
+    address:"Södra Hamngatan 2, Lysekil", boards:3, price:"100 kr/h", priceType:"bana",
     type:"Bristoltavla", hours:"Mån–Tor 11–22, Fre–Lör 11–sent",
     open:true, verified:false, beer:"79 kr",
     note:"3 bristoltavlor vid hamnen."
@@ -1422,7 +1451,7 @@ const bars = [
   {
     id:31, name:"O'Learys Halmstad", city:"Halmstad",
     lat:56.6753, lng:12.8586,
-    address:"Storgatan 28–30, Halmstad", boards:4, price:"350 kr/h",
+    address:"Storgatan 28–30, Halmstad", boards:4, price:"350 kr/h", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Kontrollera på olearys.se",
     open:true, verified:false,
     note:"4 bristoltavlor med autoscoring."
@@ -1449,7 +1478,7 @@ const bars = [
   {
     id:34, name:"Latitude-59", city:"Uppsala",
     lat:59.8687, lng:17.6288,
-    address:"Svartbäcksgatan 71, Uppsala", boards:3, price:"150 kr",
+    address:"Svartbäcksgatan 71, Uppsala", boards:3, price:"150 kr", priceType:"bana",
     type:"Bristoltavla", hours:"Mån–Tis Stängt, Ons–Tor 15–23, Fre 15–00, Lör 10–00, Sön 10–23",
     open:true, verified:false, beer:"100 kr",
     note:"3 bristoltavlor."
@@ -1457,7 +1486,7 @@ const bars = [
   {
     id:35, name:"Interpool Uppsala", city:"Uppsala",
     lat:59.8602, lng:17.6371,
-    address:"Svartbäcksgatan 11, Uppsala", boards:8, price:"100 kr",
+    address:"Svartbäcksgatan 11, Uppsala", boards:8, price:"100 kr", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Mån–Tor 16–02, Fre–Lör 13–03, Sön 13–02",
     open:true, verified:false, beer:"99 kr",
     note:"8 bristoltavlor med autoscoring."
@@ -1465,7 +1494,7 @@ const bars = [
   {
     id:36, name:"Sonoro Bar", city:"Uppsala",
     lat:59.8595, lng:17.6408,
-    address:"Vaksalagatan 10, Uppsala", boards:6, price:"97 kr",
+    address:"Vaksalagatan 10, Uppsala", boards:6, price:"97 kr", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Mån–Tor 17–01, Fre 16–03, Lör 13–03, Sön 13–01",
     open:true, verified:false, beer:"79 kr",
     note:"6 bristoltavlor med autoscoring."
@@ -1492,7 +1521,7 @@ const bars = [
   {
     id:39, name:"Classic Bowl", city:"Göteborg",
     lat:57.7254, lng:12.0076,
-    address:"Gamlestansvägen 2, Göteborg", boards:6, price:"100 kr",
+    address:"Gamlestansvägen 2, Göteborg", boards:6, price:"100 kr", priceType:"bana",
     type:"Bristoltavla", hours:"Kontakta stället",
     open:true, verified:false,
     note:"6 bristoltavlor. Bowling på samma ställe."
@@ -1517,7 +1546,7 @@ const bars = [
   {
     id:42, name:"Bg's", city:"Trollhättan",
     lat:58.2836, lng:12.2888,
-    address:"Spannmålsgatan 11, Trollhättan", boards:3, price:"200 kr/h",
+    address:"Spannmålsgatan 11, Trollhättan", boards:3, price:"200 kr/h", priceType:"bana",
     type:"Bristol Autoscoring", hours:"Kontakta stället",
     open:true, verified:false, beer:"100 kr",
     note:"3 bristoltavlor med autoscoring."
@@ -1526,7 +1555,7 @@ const bars = [
   {
     id:43, name:"Biljardbaren", city:"Norrköping",
     lat:58.5901, lng:16.1826,
-    address:"Prästgatan 50, Norrköping", boards:5, price:"250 kr",
+    address:"Prästgatan 50, Norrköping", boards:5, price:"250 kr", priceType:"bana",
     type:"Bristol Autoscoring", hours:"16–23",
     open:true, verified:false,
     note:"5 bristoltavlor med autoscoring."
@@ -1535,7 +1564,7 @@ const bars = [
   {
     id:44, name:"Danny's", city:"Uddevalla",
     lat:58.3494, lng:11.9340,
-    address:"Norra Drottninggatan, Uddevalla", boards:3, price:"90 kr/pers/h",
+    address:"Norra Drottninggatan, Uddevalla", boards:3, price:"90 kr/pers/h", priceType:"person",
     type:"Bristol Autoscoring", hours:"Kontakta stället",
     open:true, verified:false, beer:"65 kr",
     note:"Bristoltavlor med autoscoring. 90 kr per person per timme."
@@ -1566,16 +1595,22 @@ let userLat = null, userLng = null;
 let selectedId = null;
 let markers = {};
 let map;
+let darkTile, lightTile;
+let isDarkMap = true;
 
 // ──────────────────────────────────────────
 // MAP INIT
 // ──────────────────────────────────────────
 function initMap() {
   map = L.map('map', { zoomControl: false }).setView([56.9, 12.8], 7);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  darkTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://carto.com/">CARTO</a> © <a href="https://osm.org/">OSM</a>',
     subdomains: 'abcd', maxZoom: 20
   }).addTo(map);
+  lightTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://carto.com/">CARTO</a> © <a href="https://osm.org/">OSM</a>',
+    subdomains: 'abcd', maxZoom: 20
+  });
   L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
   bars.forEach(bar => {
@@ -1607,7 +1642,7 @@ function buildPopup(bar) {
       <div class="popup-city">📍 ${bar.address}, ${bar.city}</div>
       <div class="popup-row"><span class="popup-label">Status</span>${openHtml}</div>
       <div class="popup-row"><span class="popup-label">Tavlor</span><span class="popup-val">${bar.boards} st (${bar.type})</span></div>
-      <div class="popup-row"><span class="popup-label">Pris</span><span class="popup-val yellow">${bar.price}</span></div>
+      <div class="popup-row"><span class="popup-label">Pris</span><span class="popup-val yellow">${bar.price}${bar.priceType ? ` (per ${bar.priceType})` : ''}</span></div>
       ${bar.beer ? `<div class="popup-row"><span class="popup-label">Öl (40–50cl)</span><span class="popup-val">${bar.beer}</span></div>` : ''}
       <div class="popup-row"><span class="popup-label">Öppettider</span><span class="popup-val">${bar.hours}</span></div>
       ${bar.note ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--muted);font-style:italic">${bar.note}</div>` : ''}
@@ -1747,6 +1782,19 @@ function updateStats() {
 // ──────────────────────────────────────────
 // LOCATE USER
 // ──────────────────────────────────────────
+function toggleMapTheme() {
+  if (isDarkMap) {
+    map.removeLayer(darkTile);
+    lightTile.addTo(map);
+    document.getElementById('themeToggle').textContent = '🌙';
+  } else {
+    map.removeLayer(lightTile);
+    darkTile.addTo(map);
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+  isDarkMap = !isDarkMap;
+}
+
 function locateUser() {
   if (!navigator.geolocation) { alert('Din webbläsare stöder inte platsinformation.'); return; }
   navigator.geolocation.getCurrentPosition(pos => {
