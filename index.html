@@ -482,6 +482,8 @@
       padding: 2rem;
       width: 90%;
       max-width: 460px;
+      max-height: 85vh;
+      overflow-y: auto;
       position: relative;
     }
     .modal h2 {
@@ -554,6 +556,42 @@
       transition: transform 0.2s;
     }
     .dart-marker:hover { transform: scale(1.15); }
+
+    .dart-marker.dual {
+      background: linear-gradient(135deg, var(--accent) 50%, #4ade80 50%);
+      box-shadow: 0 4px 16px rgba(74,222,128,0.3);
+    }
+    .club-marker {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #4ade80; border: 3px solid #0d0d0f;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; box-shadow: 0 4px 16px rgba(74,222,128,0.4);
+      cursor: pointer; transition: transform 0.2s;
+    }
+    .club-marker:hover { transform: scale(1.15); }
+    .club-section { margin-top: 10px; padding: 8px 10px; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); border-radius: 8px; }
+    .club-section-title { font-size: 0.75rem; font-weight: 600; color: #4ade80; margin-bottom: 4px; }
+    .club-entry { font-size: 0.78rem; color: var(--text); margin-top: 4px; }
+    .club-entry span { color: var(--muted); }
+
+    /* Sidebar list toggle */
+    .list-toggle { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+    .list-toggle-btn { flex: 1; padding: 8px; text-align: center; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; font-size: 0.8rem; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .list-toggle-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    /* Club days grid */
+    .club-days-grid { display: flex; flex-direction: column; gap: 4px; }
+    .club-day-row { display: grid; grid-template-columns: 22px 75px 1fr; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); padding: 4px 0; }
+    .club-day-row input[type="checkbox"] { accent-color: #4ade80; width: 18px; height: 18px; cursor: pointer; margin: 0; }
+    .club-day-row label { cursor: pointer; }
+    .club-day-row input[type="checkbox"]:checked + label { color: var(--text); font-weight: 600; }
+    .club-day-time { padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.82rem; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; width: 100%; box-sizing: border-box; }
+    .club-day-time:disabled { opacity: 0.3; }
+
+    /* Form tabs */
+    .form-tabs { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin-bottom: 1.2rem; }
+    .form-tab { flex: 1; padding: 10px; text-align: center; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .form-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
     /* MOBILE */
     @media (max-width: 700px) {
@@ -962,7 +1000,7 @@
   </div>
   <div class="header-right">
     <button class="btn-add" onclick="openScorer()" style="background:var(--surface2);color:var(--accent);border:1px solid var(--accent);margin-right:0.5rem">🎯 Scorer</button>
-    <button class="btn-add" onclick="openModal()">+ Lägg till bar</button>
+    <button class="btn-add" onclick="openModal()">+ Lägg till</button>
   </div>
 </header>
 
@@ -1005,8 +1043,13 @@
         <div class="filter-chip city-chip" onclick="setCity('Borås', this)">Borås</div>
       </div>
     </div>
+    <div class="list-toggle">
+      <button class="list-toggle-btn active" id="toggleBarer" onclick="showListView('barer')">🎯 Barer</button>
+      <button class="list-toggle-btn" id="toggleKlubbar" onclick="showListView('klubbar')">🏆 Klubbar</button>
+    </div>
     <div class="results-label" id="resultsLabel">Visar alla barer</div>
     <div class="bar-list" id="barList"></div>
+    <div class="bar-list" id="clubList" style="display:none"></div>
   </aside>
 
   <div class="map-wrap">
@@ -1032,7 +1075,10 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <button class="btn-close" onclick="closeModal()">✕</button>
-    <h2>Lägg till bar</h2>
+    <div class="form-tabs">
+      <div class="form-tab active" id="formTabBar" onclick="switchFormTab('bar')">🎯 Lägg till bar</div>
+      <div class="form-tab" id="formTabClub" onclick="switchFormTab('club')">🏆 Lägg till klubb</div>
+    </div>
     <form id="barForm" name="ny-bar" method="POST" onsubmit="return submitBar(event)">
       <div class="form-group">
         <label>Barens namn</label>
@@ -1072,7 +1118,7 @@
       </div>
       <div class="form-group">
         <label>Adress</label>
-        <input type="text" name="adress" id="formAddress" placeholder="Storgatan 1" />
+        <input type="text" name="adress" id="formAddress" placeholder="Storgatan 1" required />
       </div>
       <div class="form-group">
         <label>Öppettider (fritext)</label>
@@ -1083,6 +1129,66 @@
         <input type="text" name="olpris" id="formBeerPrice" placeholder="89 kr" />
       </div>
       <button type="submit" class="btn-submit">Skicka in 🎯</button>
+    </form>
+    <form id="clubForm" name="ny-klubb" method="POST" onsubmit="return submitClub(event)" style="display:none">
+      <div class="form-group">
+        <label>Klubbens namn</label>
+        <input type="text" name="klubbnamn" id="formClubName" placeholder="Dartkartan Dart Club" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Stad</label>
+          <input type="text" name="stad" id="formClubCity" placeholder="Göteborg" required />
+        </div>
+        <div class="form-group">
+          <label>Spelar på</label>
+          <select name="spelar_pa" id="formClubBar" onchange="toggleClubBarOther(this)" required>
+            <option value="">— Välj bar —</option>
+            <option value="__other">Annan lokal (ej listad)</option>
+          </select>
+          <input type="text" name="spelar_pa_annat" id="formClubBarOther" placeholder="Adress" style="display:none;margin-top:6px" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Speldagar & tider</label>
+        <div class="club-days-grid" id="clubDaysGrid">
+          <div class="club-day-row"><input type="checkbox" name="dag_man" value="Måndag" id="cb_man"><label for="cb_man">Måndag</label><input type="text" name="tid_man" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_tis" value="Tisdag" id="cb_tis"><label for="cb_tis">Tisdag</label><input type="text" name="tid_tis" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_ons" value="Onsdag" id="cb_ons"><label for="cb_ons">Onsdag</label><input type="text" name="tid_ons" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_tor" value="Torsdag" id="cb_tor"><label for="cb_tor">Torsdag</label><input type="text" name="tid_tor" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_fre" value="Fredag" id="cb_fre"><label for="cb_fre">Fredag</label><input type="text" name="tid_fre" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_lor" value="Lördag" id="cb_lor"><label for="cb_lor">Lördag</label><input type="text" name="tid_lor" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_son" value="Söndag" id="cb_son"><label for="cb_son">Söndag</label><input type="text" name="tid_son" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prismodell</label>
+          <select name="prismodell" id="formClubPriceType" required onchange="toggleClubPriceInput(this)">
+            <option value="">— Välj —</option>
+            <option value="Gratis">Gratis</option>
+            <option value="Pris per gång">Pris per gång</option>
+            <option value="Medlemskap">Medlemskap</option>
+          </select>
+        </div>
+        <div class="form-group" id="formClubPriceGroup" style="display:none">
+          <label>Belopp</label>
+          <input type="text" name="pris" id="formClubPrice" placeholder="kr/år" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Sociala medier</label>
+        <input type="text" name="sociala_medier" id="formClubSocial" placeholder="ex facebook.com/dartkartan" />
+      </div>
+      <div class="form-group">
+        <label>Hemsida</label>
+        <input type="text" name="hemsida" id="formClubWeb" placeholder="ex dartkartan.se" />
+      </div>
+      <div class="form-group">
+        <label>Telefon</label>
+        <input type="text" name="telefon" id="formClubPhone" placeholder="ex 070- T20 T20 Bull" />
+      </div>
+      <button type="submit" class="btn-submit">Skicka in 🏆</button>
     </form>
   </div>
 </div>
@@ -1344,6 +1450,27 @@
     <label>Övrig kommentar</label>
     <textarea id="editComment" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
     <button class="edit-modal-submit" onclick="submitEdit()">Skicka förslag</button>
+  </div>
+</div>
+
+<!-- EDIT CLUB MODAL -->
+<div id="editClubModal" class="edit-modal" style="display:none" onclick="if(event.target===this)closeEditClubModal()">
+  <div class="edit-modal-box">
+    <button class="edit-modal-close" onclick="closeEditClubModal()">&times;</button>
+    <h3>Föreslå ändring</h3>
+    <p style="color:var(--muted);font-size:0.8rem;margin:4px 0 0">för <strong id="editClubName"></strong></p>
+    <input type="hidden" id="editClubId">
+    <label>Dag</label>
+    <input id="editClubDay" type="text" placeholder="t.ex. Tisdagar">
+    <label>Tid</label>
+    <input id="editClubTime" type="text" placeholder="t.ex. 18:00–21:00">
+    <label>Pris</label>
+    <input id="editClubPrice" type="text" placeholder="t.ex. 50 kr/pers">
+    <label>Kontakt</label>
+    <input id="editClubContact" type="text" placeholder="Facebook/hemsida/telefon">
+    <label>Övrig kommentar</label>
+    <textarea id="editClubComment" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
+    <button class="edit-modal-submit" onclick="submitEditClub()">Skicka förslag</button>
   </div>
 </div>
 
@@ -1822,11 +1949,26 @@ const bars = [
 
 ];
 
+// ──────────────────────────────────────────
+// DATA – dartklubbar
+// ──────────────────────────────────────────
+const clubs = [
+  {
+    id:1, name:"Bowlers Dart Club", city:"Borås",
+    barId:59, day:"Onsdag", time:"18:00–20:00", price:"50 kr/pers",
+    contact:"", note:"Inga förkunskaper behövs."
+  },
+];
+
 let activeFilter = 'alla';
 let activeCity = 'alla';
 let userLat = null, userLng = null;
 let selectedId = null;
 let markers = {};
+let barOnlyIds = [];
+let clubOnlyIds = [];
+let dualIds = [];
+let barOnlyLayer, clubOnlyLayer, dualLayer;
 let map;
 let darkTile, lightTile;
 let isDarkMap = true;
@@ -1846,18 +1988,42 @@ function initMap() {
   });
   L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
+  barOnlyLayer = L.layerGroup().addTo(map);
+  clubOnlyLayer = L.layerGroup();
+  dualLayer = L.layerGroup().addTo(map);
+
   bars.forEach(bar => {
+    const hasClub = clubs.some(c => c.barId === bar.id);
     const icon = L.divIcon({
       className: '',
-      html: `<div class="dart-marker" title="${bar.name}">🎯</div>`,
+      html: `<div class="dart-marker${hasClub ? ' dual' : ''}" title="${bar.name}">🎯</div>`,
       iconSize: [36, 36],
       iconAnchor: [18, 18],
       popupAnchor: [0, -20],
     });
-    const marker = L.marker([bar.lat, bar.lng], { icon }).addTo(map);
+    const marker = L.marker([bar.lat, bar.lng], { icon });
     marker.bindPopup(buildPopup(bar));
     marker.on('click', () => selectBar(bar.id));
     markers[bar.id] = marker;
+    if (hasClub) { dualIds.push(bar.id); dualLayer.addLayer(marker); }
+    else { barOnlyIds.push(bar.id); barOnlyLayer.addLayer(marker); }
+  });
+
+  // Standalone clubs (barId === null)
+  clubs.filter(c => c.barId === null).forEach(club => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="club-marker" title="${club.name}">🏆</div>`,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+      popupAnchor: [0, -20],
+    });
+    const marker = L.marker([club.lat, club.lng], { icon });
+    marker.bindPopup(buildClubPopup(club));
+    const cid = 'club-' + club.id;
+    markers[cid] = marker;
+    clubOnlyIds.push(cid);
+    clubOnlyLayer.addLayer(marker);
   });
 
   updateStats();
@@ -1886,7 +2052,38 @@ function buildPopup(bar) {
         📍 Vägbeskrivning
       </a>
       <button class="btn-edit-popup" onclick="openEditModal(${bar.id})">✏️ Föreslå ändring</button>
+      ${(() => {
+        const barClubs = clubs.filter(c => c.barId === bar.id);
+        if (barClubs.length === 0) return '';
+        return `<div class="club-section">
+          <div class="club-section-title">🏆 Klubbar som spelar här</div>
+          ${barClubs.map(c => `<div class="club-entry">
+            <strong>${c.name}</strong><br>
+            <span>📅 ${c.day} ${c.time}</span>${c.price ? ` · <span>💰 ${c.price}</span>` : ''}
+            ${c.note ? `<br><span style="font-style:italic">${c.note}</span>` : ''}
+            <br><button class="btn-edit-popup" onclick="openEditClubModal(${c.id})" style="margin-top:4px">✏️ Föreslå ändring</button>
+          </div>`).join('')}
+        </div>`;
+      })()}
       <div style="margin-top:10px;font-size:0.65rem;color:var(--muted);opacity:0.6">Vi reserverar oss för eventuella felaktigheter i uppgifterna. Kontakta stället för att bekräfta priser och öppettider.</div>
+    </div>
+  `;
+}
+
+function buildClubPopup(club) {
+  const linkedBar = club.barId ? bars.find(b => b.id === club.barId) : null;
+  return `
+    <div class="popup-inner">
+      <div class="popup-name" style="color:#4ade80">🏆 ${club.name}</div>
+      <div class="popup-city">📍 ${club.city}</div>
+      ${linkedBar ? `<div class="popup-row"><span class="popup-label">Spelar på</span><span class="popup-val">${linkedBar.name}</span></div>` : ''}
+      <div class="popup-row"><span class="popup-label">Dag</span><span class="popup-val">${club.day}</span></div>
+      <div class="popup-row"><span class="popup-label">Tid</span><span class="popup-val">${club.time}</span></div>
+      ${club.price ? `<div class="popup-row"><span class="popup-label">Pris</span><span class="popup-val yellow">${club.price}</span></div>` : ''}
+      ${club.note ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--muted);font-style:italic">${club.note}</div>` : ''}
+      ${club.contact ? `<div style="margin-top:6px;font-size:0.78rem"><a href="${club.contact}" target="_blank" style="color:var(--accent)">📱 Kontakt</a></div>` : ''}
+      <button class="btn-edit-popup" onclick="openEditClubModal(${club.id})">✏️ Föreslå ändring</button>
+      <div style="margin-top:10px;font-size:0.65rem;color:var(--muted);opacity:0.6">Vi reserverar oss för eventuella felaktigheter i uppgifterna.</div>
     </div>
   `;
 }
@@ -1941,6 +2138,55 @@ function submitEdit() {
 }
 
 // ──────────────────────────────────────────
+// EDIT CLUB MODAL
+// ──────────────────────────────────────────
+function openEditClubModal(clubId) {
+  const club = clubs.find(c => c.id === clubId);
+  if (!club) return;
+  document.getElementById('editClubName').textContent = club.name;
+  document.getElementById('editClubId').value = clubId;
+  document.getElementById('editClubDay').value = club.day || '';
+  document.getElementById('editClubTime').value = club.time || '';
+  document.getElementById('editClubPrice').value = club.price || '';
+  document.getElementById('editClubContact').value = club.contact || '';
+  document.getElementById('editClubComment').value = '';
+  document.getElementById('editClubModal').style.display = 'flex';
+}
+function closeEditClubModal() {
+  document.getElementById('editClubModal').style.display = 'none';
+}
+function submitEditClub() {
+  const clubId = document.getElementById('editClubId').value;
+  const club = clubs.find(c => c.id == clubId);
+  const data = new FormData();
+  data.append('_subject', 'Redigering klubb: ' + (club ? club.name : ''));
+  data.append('typ', 'redigering-klubb');
+  data.append('klubbnamn', club ? club.name : '');
+  data.append('dag', document.getElementById('editClubDay').value);
+  data.append('tid', document.getElementById('editClubTime').value);
+  data.append('pris', document.getElementById('editClubPrice').value);
+  data.append('kontakt', document.getElementById('editClubContact').value);
+  data.append('kommentar', document.getElementById('editClubComment').value);
+
+  fetch('https://formspree.io/f/mpqyknrp', {
+    method: 'POST', body: data,
+    headers: { 'Accept': 'application/json' }
+  }).then(r => {
+    if (r.ok) {
+      document.querySelector('#editClubModal .edit-modal-box').innerHTML = `
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:2rem;margin-bottom:8px">✅</div>
+          <h3 style="color:var(--text)">Tack!</h3>
+          <p style="color:var(--muted);font-size:0.85rem">Ditt ändringsförslag har skickats.</p>
+          <button class="edit-modal-submit" onclick="closeEditClubModal()" style="margin-top:16px">Stäng</button>
+        </div>`;
+    } else {
+      alert('Något gick fel. Försök igen!');
+    }
+  });
+}
+
+// ──────────────────────────────────────────
 // SIDEBAR LIST
 // ──────────────────────────────────────────
 function renderList(data) {
@@ -1966,6 +2212,58 @@ function renderList(data) {
   `).join('');
 }
 
+let activeListView = 'barer';
+
+function showListView(view) {
+  activeListView = view;
+  document.getElementById('toggleBarer').classList.toggle('active', view === 'barer');
+  document.getElementById('toggleKlubbar').classList.toggle('active', view === 'klubbar');
+  document.getElementById('barList').style.display = view === 'barer' ? '' : 'none';
+  document.getElementById('clubList').style.display = view === 'klubbar' ? '' : 'none';
+  map.closePopup();
+  // Toggle layer groups
+  if (view === 'barer') {
+    if (!map.hasLayer(barOnlyLayer)) barOnlyLayer.addTo(map);
+    if (map.hasLayer(clubOnlyLayer)) map.removeLayer(clubOnlyLayer);
+  } else {
+    if (map.hasLayer(barOnlyLayer)) map.removeLayer(barOnlyLayer);
+    if (!map.hasLayer(clubOnlyLayer)) clubOnlyLayer.addTo(map);
+  }
+  if (view === 'klubbar') renderClubList();
+  else filterBars();
+}
+
+function renderClubList() {
+  const list = document.getElementById('clubList');
+  const label = document.getElementById('resultsLabel');
+
+  let filtered = clubs;
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  if (q) filtered = filtered.filter(c => c.name.toLowerCase().includes(q) || c.city.toLowerCase().includes(q));
+  if (activeCity !== 'alla') filtered = filtered.filter(c => c.city === activeCity);
+
+  label.textContent = `Visar ${filtered.length} av ${clubs.length} klubbar`;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.9rem">Inga klubbar matchar sökningen 🏆</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(club => {
+    const linkedBar = club.barId ? bars.find(b => b.id === club.barId) : null;
+    return `
+      <div class="bar-card" onclick="${club.barId ? `selectBar(${club.barId})` : ''}">
+        <div class="bar-name" style="color:#4ade80">🏆 ${club.name}</div>
+        <div class="bar-city">📍 ${club.city}${linkedBar ? ` · ${linkedBar.name}` : ''}</div>
+        <div class="bar-meta">
+          <span class="badge boards">📅 ${club.day} ${club.time}</span>
+          ${club.price ? `<span class="badge price">💰 ${club.price}</span>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 function selectBar(id) {
   selectedId = id;
   const bar = bars.find(b => b.id === id);
@@ -1982,6 +2280,7 @@ function selectBar(id) {
 }
 
 function filterBars() {
+  if (activeListView === 'klubbar') { renderClubList(); return; }
   const q = document.getElementById('searchInput').value.toLowerCase();
   let data = bars.filter(b =>
     b.name.toLowerCase().includes(q) || b.city.toLowerCase().includes(q)
@@ -2056,12 +2355,12 @@ function updateMarkers(data) {
   const visibleIds = new Set(data.map(b => b.id));
   bars.forEach(bar => {
     const m = markers[bar.id];
-    if (m) {
-      if (visibleIds.has(bar.id)) {
-        m.addTo(map);
-      } else {
-        m.remove();
-      }
+    if (!m) return;
+    const layer = dualIds.includes(bar.id) ? dualLayer : barOnlyLayer;
+    if (visibleIds.has(bar.id)) {
+      if (!layer.hasLayer(m)) layer.addLayer(m);
+    } else {
+      if (layer.hasLayer(m)) layer.removeLayer(m);
     }
   });
 }
@@ -2120,8 +2419,108 @@ function locateUser() {
 // ──────────────────────────────────────────
 // MODAL
 // ──────────────────────────────────────────
-function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
+function openModal()  { document.getElementById('modalOverlay').classList.add('open'); switchFormTab('bar'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function switchFormTab(tab) {
+  document.getElementById('formTabBar').classList.toggle('active', tab === 'bar');
+  document.getElementById('formTabClub').classList.toggle('active', tab === 'club');
+  document.getElementById('barForm').style.display = tab === 'bar' ? '' : 'none';
+  document.getElementById('clubForm').style.display = tab === 'club' ? '' : 'none';
+  if (tab === 'club') populateClubBarSelect();
+}
+
+function populateClubBarSelect() {
+  const sel = document.getElementById('formClubBar');
+  // Behåll bara de två första options (Välj bar + Annan lokal)
+  while (sel.options.length > 2) sel.remove(2);
+  // Sortera barer efter stad + namn
+  const sorted = [...bars].sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
+  sorted.forEach(bar => {
+    const opt = document.createElement('option');
+    opt.value = bar.name + ' (' + bar.city + ')';
+    opt.textContent = bar.name + ' – ' + bar.city;
+    sel.appendChild(opt);
+  });
+}
+
+function toggleClubBarOther(sel) {
+  document.getElementById('formClubBarOther').style.display = sel.value === '__other' ? '' : 'none';
+}
+
+function toggleClubPriceInput(sel) {
+  const grp = document.getElementById('formClubPriceGroup');
+  const inp = document.getElementById('formClubPrice');
+  if (sel.value === 'Gratis' || sel.value === '') {
+    grp.style.display = 'none';
+    inp.removeAttribute('required');
+    inp.value = '';
+  } else {
+    grp.style.display = '';
+    inp.setAttribute('required', 'required');
+    inp.placeholder = sel.value === 'Medlemskap' ? 'kr/år' : 'kr';
+  }
+}
+
+// Enable/disable time inputs when day checkbox is toggled
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox' && e.target.closest('.club-day-row')) {
+    const row = e.target.closest('.club-day-row');
+    const timeInput = row.querySelector('.club-day-time');
+    if (timeInput) {
+      timeInput.disabled = !e.target.checked;
+      if (e.target.checked) timeInput.focus();
+      else timeInput.value = '';
+    }
+  }
+});
+
+function submitClub(e) {
+  e.preventDefault();
+  const name = document.getElementById('formClubName').value;
+  // Collect checked days + times
+  const rows = document.querySelectorAll('#clubDaysGrid .club-day-row');
+  const dagar = [];
+  rows.forEach(row => {
+    const cb = row.querySelector('input[type="checkbox"]');
+    const timeInput = row.querySelector('.club-day-time');
+    if (cb.checked) {
+      const t = timeInput.value.trim();
+      dagar.push(t ? cb.value + ' ' + t : cb.value);
+    }
+  });
+  if (dagar.length === 0) { alert('Välj minst en speldag!'); return false; }
+  const social = document.getElementById('formClubSocial').value.trim();
+  const web = document.getElementById('formClubWeb').value.trim();
+  const phone = document.getElementById('formClubPhone').value.trim();
+  if (!social && !web && !phone) { alert('Fyll i minst ett kontaktfält (sociala medier, hemsida eller telefon)!'); return false; }
+  const data = new FormData(document.getElementById('clubForm'));
+  // Replace individual day fields with combined string
+  data.delete('dag_man'); data.delete('dag_tis'); data.delete('dag_ons');
+  data.delete('dag_tor'); data.delete('dag_fre'); data.delete('dag_lor'); data.delete('dag_son');
+  data.delete('tid_man'); data.delete('tid_tis'); data.delete('tid_ons');
+  data.delete('tid_tor'); data.delete('tid_fre'); data.delete('tid_lor'); data.delete('tid_son');
+  data.set('dagar', dagar.join(', '));
+  data.append('_subject', 'Ny klubb: ' + name);
+  data.append('typ', 'ny-klubb');
+
+  fetch('https://formspree.io/f/mpqyknrp', {
+    method: 'POST', body: data,
+    headers: { 'Accept': 'application/json' }
+  }).then(r => {
+    if (r.ok) {
+      document.getElementById('clubForm').innerHTML = `
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:2.5rem;margin-bottom:0.5rem">🏆</div>
+          <h3 style="color:var(--text)">Tack!</h3>
+          <p style="color:var(--muted);font-size:0.85rem">Din klubb granskas och läggs till inom kort.</p>
+        </div>`;
+    } else {
+      alert('Något gick fel. Försök igen!');
+    }
+  });
+  return false;
+}
 
 function submitBar(e) {
   e.preventDefault();
