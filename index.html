@@ -860,6 +860,15 @@
         <div class="filter-chip city-chip active" onclick="setCity('alla', this)">🇸🇪 Alla städer</div>
         <div class="filter-chip city-chip" onclick="setCity('Göteborg', this)">Göteborg</div>
         <div class="filter-chip city-chip" onclick="setCity('Malmö', this)">Malmö</div>
+        <div class="filter-chip city-chip" onclick="setCity('Stockholm', this)">Stockholm</div>
+        <div class="filter-chip city-chip" onclick="setCity('Uppsala', this)">Uppsala</div>
+        <div class="filter-chip city-chip" onclick="setCity('Halmstad', this)">Halmstad</div>
+        <div class="filter-chip city-chip" onclick="setCity('Borlänge', this)">Borlänge</div>
+        <div class="filter-chip city-chip" onclick="setCity('Alingsås', this)">Alingsås</div>
+        <div class="filter-chip city-chip" onclick="setCity('Lysekil', this)">Lysekil</div>
+        <div class="filter-chip city-chip" onclick="setCity('Västervik', this)">Västervik</div>
+        <div class="filter-chip city-chip" onclick="setCity('Tranås', this)">Tranås</div>
+        <div class="filter-chip city-chip" onclick="setCity('Torslanda', this)">Torslanda</div>
       </div>
     </div>
     <div class="results-label" id="resultsLabel">Visar alla barer</div>
@@ -1337,6 +1346,136 @@ const bars = [
     open:true, verified:false,
     note:"Malmös äldsta krog, byggd 1937. Mysig kvarterskrog med 1 bristoltavla. Ring 040-97 58 90."
   },
+  {
+    id:26, name:"Goose Malmö", city:"Malmö",
+    lat:55.5992, lng:12.9979,
+    address:"Davidshallstorg 5, Malmö", boards:2, price:"Gratis",
+    type:"Bristoltavla", hours:"Mån–Tor 16–23, Fre–Lör 16–01",
+    open:true, verified:false, beer:"90 kr",
+    note:"2 bristoltavlor. Gratis att spela!"
+  },
+  // ── ALINGSÅS ──
+  {
+    id:27, name:"Stures Bowling", city:"Alingsås",
+    lat:57.9262, lng:12.5256,
+    address:"Sveagatan 8G, Alingsås", boards:10, price:"180 kr/h",
+    type:"Bristol Autoscoring", hours:"Kontakta stället",
+    open:true, verified:false,
+    note:"10 bristoltavlor med autoscoring. Bowling finns också."
+  },
+  // ── LYSEKIL ──
+  {
+    id:28, name:"The Old House Inn", city:"Lysekil",
+    lat:58.2742, lng:11.4340,
+    address:"Kungsgatan 36, Lysekil", boards:2, price:"25 kr/h",
+    type:"Bristoltavla", hours:"Mån–Sön 11–01",
+    open:true, verified:false, beer:"89 kr",
+    note:"2 bristoltavlor. Öppet varje dag 11–01."
+  },
+  {
+    id:29, name:"Sjökanten", city:"Lysekil",
+    lat:58.2731, lng:11.4373,
+    address:"Södra Hamngatan, Lysekil", boards:3, price:"100 kr/h",
+    type:"Bristoltavla", hours:"Mån–Tor 11–21, Fre–Lör 11–01",
+    open:true, verified:false, beer:"60 kr",
+    note:"3 bristoltavlor vid hamnen."
+  },
+  // ── VÄSTERVIK ──
+  {
+    id:30, name:"Västerviks Dartklubb", city:"Västervik",
+    lat:57.7584, lng:16.6373,
+    address:"Sjögatan 6, Västervik", boards:5, price:"20 kr",
+    type:"Bristoltavla", hours:"24/7",
+    open:true, verified:false, beer:"30 kr",
+    note:"5 bristoltavlor. Dartklubb – öppet dygnet runt!"
+  },
+  // ── HALMSTAD ──
+  {
+    id:31, name:"O'Learys Halmstad", city:"Halmstad",
+    lat:56.6753, lng:12.8586,
+    address:"Storgatan 28–30, Halmstad", boards:4, price:"350 kr/h",
+    type:"Bristol Autoscoring", hours:"Kontrollera på olearys.se",
+    open:true, verified:false,
+    note:"4 bristoltavlor med autoscoring."
+  },
+  // ── BORLÄNGE ──
+  {
+    id:32, name:"Borlänge Dart Club", city:"Borlänge",
+    lat:60.4774, lng:15.4313,
+    address:"Hantverkargatan 9, Borlänge", boards:14, price:"Gratis",
+    type:"Bristoltavla", hours:"Mån 17–20, Tor 17–20",
+    open:true, verified:false,
+    note:"14 bristoltavlor! Dartklubb med gratis spel."
+  },
+  // ── STOCKHOLM ──
+  {
+    id:33, name:"East End Company", city:"Stockholm",
+    lat:59.3636, lng:17.9967,
+    address:"Solnavägen 104, Solna", boards:14, price:"Kontakta stället",
+    type:"Bristoltavla", hours:"Mån–Fre 15–, Lör 14–",
+    open:true, verified:false, beer:"65 kr",
+    note:"14 bristoltavlor. Stort dartställe i Solna."
+  },
+  // ── UPPSALA ──
+  {
+    id:34, name:"Latitude-59", city:"Uppsala",
+    lat:59.8687, lng:17.6288,
+    address:"Svartbäcksgatan 71, Uppsala", boards:3, price:"150 kr",
+    type:"Bristoltavla", hours:"Mån–Tis Stängt, Ons– öppet",
+    open:true, verified:false, beer:"100 kr",
+    note:"3 bristoltavlor."
+  },
+  {
+    id:35, name:"Interpool Uppsala", city:"Uppsala",
+    lat:59.8602, lng:17.6371,
+    address:"Svartbäcksgatan 11, Uppsala", boards:8, price:"100 kr",
+    type:"Bristol Autoscoring", hours:"Mån–Tor 16–02, Fre–Lör 16–03",
+    open:true, verified:false, beer:"99 kr",
+    note:"8 bristoltavlor med autoscoring."
+  },
+  {
+    id:36, name:"Sonoro Bar", city:"Uppsala",
+    lat:59.8595, lng:17.6408,
+    address:"Vaksalagatan 10, Uppsala", boards:6, price:"97 kr",
+    type:"Bristol Autoscoring", hours:"Mån–Tor 17–01, Fre–Lör 17–03",
+    open:true, verified:false, beer:"79 kr",
+    note:"6 bristoltavlor med autoscoring."
+  },
+  // ── TRANÅS ──
+  {
+    id:37, name:"Babar Kök & Bar", city:"Tranås",
+    lat:58.0345, lng:14.9743,
+    address:"Bankgatan 1, Tranås", boards:2, price:"Kontakta stället",
+    type:"Bristoltavla", hours:"Kontakta stället",
+    open:true, verified:false, beer:"59 kr",
+    note:"2 bristoltavlor."
+  },
+  // ── TORSLANDA ──
+  {
+    id:38, name:"Restaurang Hörnet", city:"Torslanda",
+    lat:57.7106, lng:11.7770,
+    address:"Gamla Flygplatsvägen, Torslanda", boards:6, price:"Gratis",
+    type:"Bristoltavla", hours:"Dart onsdag och torsdag",
+    open:true, verified:false, beer:"65 kr",
+    note:"6 bristoltavlor. Gratis dart – öppet för dart onsdag & torsdag. 65 kr öl för medlemmar."
+  },
+  // ── GÖTEBORG (fler) ──
+  {
+    id:39, name:"Classic Bowl", city:"Göteborg",
+    lat:57.7254, lng:12.0076,
+    address:"Gamlestansvägen 2, Göteborg", boards:6, price:"100 kr",
+    type:"Bristoltavla", hours:"Kontakta stället",
+    open:true, verified:false,
+    note:"6 bristoltavlor. Bowling på samma ställe."
+  },
+  {
+    id:40, name:"Bistro Bangatan", city:"Göteborg",
+    lat:57.6961, lng:11.9358,
+    address:"Bangatan 21, Göteborg", boards:2, price:"Gratis",
+    type:"Bristoltavla", hours:"Sön–Tor 16–sent",
+    open:true, verified:false, beer:"59 kr",
+    note:"2 bristoltavlor. Gratis att spela!"
+  },
 
 ];
 
@@ -1464,9 +1603,22 @@ function setCity(city, el) {
   document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   // Flyg till rätt stad
-  if (city === 'Göteborg') map.flyTo([57.708, 11.965], 12, {duration:1});
-  else if (city === 'Malmö') map.flyTo([55.600, 13.000], 13, {duration:1});
-  else map.flyTo([56.9, 12.8], 7, {duration:1});
+  const cityCoords = {
+    'Göteborg': [[57.708, 11.965], 12],
+    'Malmö': [[55.600, 13.000], 13],
+    'Stockholm': [[59.364, 17.997], 12],
+    'Uppsala': [[59.860, 17.635], 13],
+    'Halmstad': [[56.675, 12.859], 13],
+    'Borlänge': [[60.477, 15.431], 13],
+    'Alingsås': [[57.930, 12.533], 13],
+    'Lysekil': [[58.274, 11.436], 13],
+    'Västervik': [[57.758, 16.637], 13],
+    'Tranås': [[58.035, 14.974], 13],
+    'Torslanda': [[57.711, 11.777], 14],
+  };
+  const cc = cityCoords[city];
+  if (cc) map.flyTo(cc[0], cc[1], {duration:1});
+  else map.flyTo([59.0, 15.0], 6, {duration:1});
   filterBars();
 }
 
