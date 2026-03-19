@@ -1046,6 +1046,7 @@
         <div class="filter-chip city-chip" onclick="setCity('Falkenberg', this)">Falkenberg</div>
         <div class="filter-chip city-chip" onclick="setCity('Eksjö', this)">Eksjö</div>
         <div class="filter-chip city-chip" onclick="setCity('Ludvika', this)">Ludvika</div>
+        <div class="filter-chip city-chip" onclick="setCity('Haninge', this)">Haninge</div>
       </div>
     </div>
     <div class="list-toggle">
@@ -1938,6 +1939,14 @@ const bars = [
     open:true, verified:false, beer:"58 kr",
     note:"2 Scolia autoscoring-tavlor. Sportbar i Behrn Arena."
   },
+  {
+    id:62, name:"Memory Lane Sportsbar", city:"Haninge",
+    lat:59.1577, lng:18.1367,
+    address:"Runstensvägen 1, 136 46 Handen", boards:8, priceType:"bana",
+    type:"Bristoltavla", hours:"Mån 10–21:30, Tis–Ons 10–23, Tor 10–23, Fre–Lör 10–01, Sön 11–21",
+    open:true, verified:false, beer:"",
+    note:"8 bristoltavlor. Ligger i Haninge Centrum."
+  },
 
 ];
 
@@ -2462,6 +2471,7 @@ function setCity(city, el) {
     'Falkenberg': [[56.898, 12.471], 13],
     'Eksjö': [[57.672, 14.976], 13],
     'Ludvika': [[60.151, 15.187], 13],
+    'Haninge': [[59.158, 18.137], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
