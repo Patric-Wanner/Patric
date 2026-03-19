@@ -952,6 +952,9 @@
         <div class="filter-chip city-chip" onclick="setCity('Örebro', this)">Örebro</div>
         <div class="filter-chip city-chip" onclick="setCity('Umeå', this)">Umeå</div>
         <div class="filter-chip city-chip" onclick="setCity('Östersund', this)">Östersund</div>
+        <div class="filter-chip city-chip" onclick="setCity('Södertälje', this)">Södertälje</div>
+        <div class="filter-chip city-chip" onclick="setCity('Sandviken', this)">Sandviken</div>
+        <div class="filter-chip city-chip" onclick="setCity('Eskilstuna', this)">Eskilstuna</div>
       </div>
     </div>
     <div class="results-label" id="resultsLabel">Visar alla barer</div>
@@ -1611,10 +1614,10 @@ const bars = [
   {
     id:45, name:"Kvarteret", city:"Örebro",
     lat:59.2753, lng:15.2134,
-    address:"Engelbrektsgatan 6, Örebro", boards:8, price:"Gratis (med egna pilar)",
-    type:"Bristoltavla", hours:"Tis–Tor 16–22, Fre 16–00, Lör 12–00, Sön 14–20",
+    address:"Engelbrektsgatan 6, Örebro", boards:7, price:"50 kr", priceType:"bana",
+    type:"Bristoltavla", hours:"Tis–Tor 16–23, Fre 16–01, Lör 12–01, Sön 14–20",
     open:true, verified:false, beer:"60 kr",
-    note:"8 bristoltavlor. Gratis att spela med egna pilar."
+    note:"7 bristoltavlor."
   },
   {
     id:46, name:"Videobiljarden", city:"Örebro",
@@ -1659,6 +1662,42 @@ const bars = [
     type:"Bristoltavla", hours:"Mån–Ons 13–01, Tor–Fre 13–01, Lör 11–01, Sön 11–23",
     open:true, verified:false,
     note:"3 bristoltavlor. Gratis att spela! Biljard och poolhall. Ring 040-19 18 16."
+  },
+  // ── SÖDERTÄLJE ──
+  {
+    id:52, name:"Tdc", city:"Södertälje",
+    lat:59.1955, lng:17.6253,
+    address:"Täppgatan 12, Södertälje", boards:11, price:"Gratis/1ggr sen medlem 150/år", priceType:"bana",
+    type:"Bristoltavla", hours:"Tis, Ons, Tor 17:30–, Lör 14:00–",
+    open:true, verified:false, beer:"40–50 kr",
+    note:"11 bristoltavlor. Gratis första gången, sedan medlemskap 150 kr/år."
+  },
+  // ── SANDVIKEN ──
+  {
+    id:53, name:"Sandvikens Dart Klubb", city:"Sandviken",
+    lat:60.6198, lng:16.7756,
+    address:"Plangatan 4, Sandviken", boards:6, price:"Gratis/60 kr", priceType:"person",
+    type:"Bristoltavla", hours:"Tis 17–22, Tor 17–22",
+    open:true, verified:false, beer:"30 kr",
+    note:"6 bristoltavlor."
+  },
+  // ── ESKILSTUNA ──
+  {
+    id:54, name:"Bowlers Eskilstuna", city:"Eskilstuna",
+    lat:59.3710, lng:16.5092,
+    address:"Rademachergatan 7, Eskilstuna", boards:7, price:"350 kr", priceType:"bana",
+    type:"Elektronisk", hours:"Sön–Mån 12–20, Tis–Tor 10–22, Fre–Lör 12–24",
+    open:true, verified:false, beer:"87 kr",
+    note:"7 elektroniska darttavlor."
+  },
+  // ── STOCKHOLM (fler) ──
+  {
+    id:55, name:"The Ship - Sportbar & Restaurang", city:"Stockholm",
+    lat:59.3370, lng:18.0380,
+    address:"Sankt Eriksgatan 36, Stockholm", boards:3, price:"Gratis", priceType:"bana",
+    type:"Bristoltavla", hours:"Mån–Sön 11:00–01:00",
+    open:true, verified:false, beer:"59 kr",
+    note:"3 bristoltavlor. Gratis att spela!"
   },
 
 ];
@@ -1813,6 +1852,9 @@ function setCity(city, el) {
     'Örebro': [[59.275, 15.210], 13],
     'Umeå': [[63.826, 20.263], 13],
     'Östersund': [[63.177, 14.636], 13],
+    'Södertälje': [[59.195, 17.625], 13],
+    'Sandviken': [[60.620, 16.776], 13],
+    'Eskilstuna': [[59.371, 16.509], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
