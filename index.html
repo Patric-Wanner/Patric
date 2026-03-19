@@ -1947,43 +1947,43 @@ const clubs = [
   {
     id:1, name:"Bowlers Dart Club", city:"Borås",
     barId:59, day:"Onsdag", time:"18:00–20:00", price:"50 kr/pers",
-    contact:"", note:"Inga förkunskaper behövs."
+    social:"", web:"", phone:"", note:"Inga förkunskaper behövs."
   },
   {
     id:2, name:"Västerviks Dartklubb", city:"Västervik",
     barId:null, lat:57.7584, lng:16.6373,
     day:"Dygnet runt", time:"24/7", price:"20 kr",
-    contact:"", note:"5 bristoltavlor. Öppet dygnet runt!"
+    social:"", web:"", phone:"", note:"5 bristoltavlor. Öppet dygnet runt!"
   },
   {
     id:3, name:"Borlänge Dart Club", city:"Borlänge",
     barId:null, lat:60.4774, lng:15.4313,
     day:"Måndag & Torsdag", time:"Mån 17–20, Tor 17–22", price:"Gratis",
-    contact:"", note:"14 bristoltavlor! Gratis spel."
+    social:"", web:"", phone:"", note:"14 bristoltavlor! Gratis spel."
   },
   {
     id:4, name:"Sandvikens Dart Klubb", city:"Sandviken",
     barId:null, lat:60.6198, lng:16.7756,
     day:"Tisdag & Torsdag", time:"Tis 17–22, Tor 17–22", price:"Gratis/60 kr",
-    contact:"", note:"6 bristoltavlor."
+    social:"", web:"", phone:"", note:"6 bristoltavlor."
   },
   {
     id:5, name:"Flamingo Dartklubb", city:"Karlskoga",
     barId:null, lat:59.3267, lng:14.5208,
     day:"Se Facebook", time:"Se Facebooksida, Flamingo DC", price:"Gratis",
-    contact:"", note:"7 bristoltavlor. Gratis att spela."
+    social:"", web:"", phone:"", note:"7 bristoltavlor. Gratis att spela."
   },
   {
     id:6, name:"Falkenberg DartKlubb", city:"Falkenberg",
     barId:null, lat:56.8975, lng:12.4714,
     day:"Tisdag & Torsdag", time:"Tisdag 19–21, Torsdag 18–20", price:"75 kr",
-    contact:"Facebook/Falkenbergsdartklubb", note:"Badhusvägen 52, Falkenberg. Pris per gång 75 kr."
+    social:"Facebook/Falkenbergsdartklubb", web:"", phone:"", note:"Badhusvägen 52, Falkenberg. Pris per gång 75 kr."
   },
   {
     id:7, name:"Ludvika DC", city:"Ludvika",
     barId:null, lat:60.1508, lng:15.1870,
     day:"Tisdag & Fredag", time:"Tisdag 17:30–21:00, Fredag 17:00–22:00", price:"Gratis",
-    contact:"Facebook.com/Ludvika dart", note:"Storgatan 15, Ludvika."
+    social:"Facebook.com/Ludvika dart", web:"", phone:"", note:"Storgatan 15, Ludvika."
   },
 ];
 
@@ -2180,6 +2180,9 @@ function buildPopup(bar) {
             <strong>${c.name}</strong><br>
             <span>📅 ${c.day} ${c.time}</span>${c.price ? ` · <span>💰 ${c.price}</span>` : ''}
             ${c.note ? `<br><span style="font-style:italic">${c.note}</span>` : ''}
+            ${c.social ? `<br><a href="${c.social.startsWith('http') ? c.social : 'https://' + c.social}" target="_blank" style="color:#4ade80;font-size:0.75rem;text-decoration:none">📱 ${c.social}</a>` : ''}
+            ${c.web ? `<br><a href="${c.web.startsWith('http') ? c.web : 'https://' + c.web}" target="_blank" style="color:var(--accent);font-size:0.75rem;text-decoration:none">🌐 ${c.web}</a>` : ''}
+            ${c.phone ? `<br><span style="color:var(--muted);font-size:0.75rem">📞 ${c.phone}</span>` : ''}
             <br><button class="btn-edit-popup" onclick="openEditClubModal(${c.id})" style="margin-top:4px">✏️ Föreslå ändring</button>
           </div>`).join('')}
         </div>`;
@@ -2200,7 +2203,11 @@ function buildClubPopup(club) {
       <div class="popup-row"><span class="popup-label">Tid</span><span class="popup-val">${club.time}</span></div>
       ${club.price ? `<div class="popup-row"><span class="popup-label">Pris</span><span class="popup-val yellow">${club.price}</span></div>` : ''}
       ${club.note ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--muted);font-style:italic">${club.note}</div>` : ''}
-      ${club.contact ? `<div style="margin-top:6px;font-size:0.78rem"><a href="${club.contact}" target="_blank" style="color:var(--accent)">📱 Kontakt</a></div>` : ''}
+      ${(club.social || club.web || club.phone) ? `<div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:0.78rem">
+        ${club.social ? `<a href="${club.social.startsWith('http') ? club.social : 'https://' + club.social}" target="_blank" style="color:#4ade80;text-decoration:none">📱 ${club.social}</a>` : ''}
+        ${club.web ? `<a href="${club.web.startsWith('http') ? club.web : 'https://' + club.web}" target="_blank" style="color:var(--accent);text-decoration:none">🌐 ${club.web}</a>` : ''}
+        ${club.phone ? `<a href="tel:${club.phone.replace(/\s/g,'')}" style="color:var(--muted);text-decoration:none">📞 ${club.phone}</a>` : ''}
+      </div>` : ''}
       <button class="btn-edit-popup" onclick="openEditClubModal(${club.id})">✏️ Föreslå ändring</button>
       <div style="margin-top:10px;font-size:0.65rem;color:var(--muted);opacity:0.6">Vi reserverar oss för eventuella felaktigheter i uppgifterna.</div>
     </div>
