@@ -518,13 +518,13 @@
         z-index: 2002 !important;
       }
 
-      /* Scorer game: fixed layout, no scroll */
-      #scorerOverlay {
-        overflow: hidden !important;
-      }
+      /* Scorer: allow scroll in setup, lock in game */
       #scorerOverlay[style*="display: block"] {
         display: flex !important;
         flex-direction: column;
+      }
+      #scorerOverlay.game-active {
+        overflow: hidden !important;
       }
       #scorerModal {
         display: flex;
@@ -533,6 +533,8 @@
         padding: 0.3rem 0.4rem 0 !important;
         width: 100% !important;
         max-width: 100% !important;
+      }
+      #scorerOverlay.game-active #scorerModal {
         overflow: hidden;
       }
       /* Hide setup header elements to save space in game */
@@ -1890,6 +1892,7 @@ function startGame() {
   document.getElementById('scorerSetup').style.display = 'none';
   document.getElementById('scorerWin').style.display = 'none';
   document.getElementById('scorerGame').style.display = 'block';
+  document.getElementById('scorerOverlay').classList.add('game-active');
   turnDarts = [];
   currentMultiplier = 'S';
   renderScoreboard();
@@ -2408,6 +2411,7 @@ function resetGame() {
   document.getElementById('scorerWin').style.display = 'none';
   document.getElementById('scorerGame').style.display = 'none';
   document.getElementById('scorerSetup').style.display = 'block';
+  document.getElementById('scorerOverlay').classList.remove('game-active');
   scorerPlayers.forEach(p => { p.score = scorerMode; p.throws = 0; p.totalScore = 0; p.lastScore = undefined; p.legs = 0; p.sets = 0; p.opened = (inRule === 'rakt'); p.highRound = 0; p.highCheckout = 0; });
   pendingThrows = [];
   throwLog = [];
