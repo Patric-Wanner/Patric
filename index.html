@@ -2554,10 +2554,12 @@ function submitBar(e) {
   if (!name || !city) { alert('Fyll i namn och stad!'); return false; }
 
   // Skicka via Formspree
+  const data = Object.fromEntries(new FormData(form));
+  data._subject = 'Ny bar: ' + name;
   fetch('https://formspree.io/f/mpqyknrp', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(Object.fromEntries(new FormData(form)))
+    body: JSON.stringify(data)
   }).then(r => {
     if (r.ok) alert(`Tack! "${name}" i ${city} har skickats in för granskning. 🎯\n\nVi lägger till den på kartan så snart den är verifierad.`);
     else alert(`Tack! "${name}" i ${city} har registrerats. 🎯`);
