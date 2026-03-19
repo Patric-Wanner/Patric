@@ -343,6 +343,51 @@
     .popup-val.green { color: #4ade80; }
     .popup-val.yellow { color: var(--accent); }
 
+    /* EDIT MODAL */
+    .edit-modal {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.7); display: flex;
+      align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .edit-modal-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px; width: 100%; max-width: 400px;
+      position: relative;
+    }
+    .edit-modal-box h3 { margin: 0 0 4px; color: var(--text); font-size: 1.1rem; }
+    .edit-modal-box label {
+      display: block; margin-top: 12px; margin-bottom: 4px;
+      font-size: 0.78rem; color: var(--muted); font-weight: 500;
+    }
+    .edit-modal-box input, .edit-modal-box textarea {
+      width: 100%; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); font-size: 0.85rem; box-sizing: border-box;
+    }
+    .edit-modal-box textarea { resize: vertical; min-height: 60px; }
+    .edit-modal-close {
+      position: absolute; top: 12px; right: 14px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; line-height: 1;
+    }
+    .edit-modal-close:hover { color: var(--text); }
+    .edit-modal-submit {
+      margin-top: 16px; width: 100%; padding: 10px;
+      background: var(--accent); color: #000; border: none;
+      border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .edit-modal-submit:hover { opacity: 0.85; }
+    .btn-edit-popup {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 6px; margin-left: 6px; padding: 6px 12px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted); font-size: 0.78rem;
+      font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-edit-popup:hover { color: var(--text); border-color: var(--accent); }
+
     /* LOCATE button */
     .btn-locate {
       position: absolute;
@@ -1278,6 +1323,27 @@
   </div>
 </div>
 
+<!-- EDIT BAR MODAL -->
+<div id="editModal" class="edit-modal" style="display:none" onclick="if(event.target===this)closeEditModal()">
+  <div class="edit-modal-box">
+    <button class="edit-modal-close" onclick="closeEditModal()">&times;</button>
+    <h3>Föreslå ändring</h3>
+    <p style="color:var(--muted);font-size:0.8rem;margin:4px 0 0">för <strong id="editBarName"></strong></p>
+    <input type="hidden" id="editBarId">
+    <label>Antal tavlor</label>
+    <input id="editBoards" type="number" min="1" placeholder="t.ex. 4">
+    <label>Pris</label>
+    <input id="editPrice" type="text" placeholder="t.ex. 100 kr/h">
+    <label>Ölpris (40–50cl)</label>
+    <input id="editBeer" type="text" placeholder="t.ex. 69 kr">
+    <label>Öppettider</label>
+    <textarea id="editHours" placeholder="t.ex. Mån–Fre 16–01, Lör 12–01"></textarea>
+    <label>Övrig kommentar</label>
+    <textarea id="editComment" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
+    <button class="edit-modal-submit" onclick="submitEdit()">Skicka förslag</button>
+  </div>
+</div>
+
 <script>
 // ──────────────────────────────────────────
 // DATA – svenska barer med dartavlor
@@ -1765,9 +1831,59 @@ function buildPopup(bar) {
         onmouseover="this.style.background='rgba(232,255,71,0.2)'" onmouseout="this.style.background='rgba(232,255,71,0.12)'">
         📍 Vägbeskrivning
       </a>
+      <button class="btn-edit-popup" onclick="openEditModal(${bar.id})">✏️ Föreslå ändring</button>
       <div style="margin-top:10px;font-size:0.65rem;color:var(--muted);opacity:0.6">Vi reserverar oss för eventuella felaktigheter i uppgifterna. Kontakta stället för att bekräfta priser och öppettider.</div>
     </div>
   `;
+}
+
+// ──────────────────────────────────────────
+// EDIT BAR MODAL
+// ──────────────────────────────────────────
+function openEditModal(barId) {
+  const bar = bars.find(b => b.id === barId);
+  if (!bar) return;
+  document.getElementById('editBarName').textContent = bar.name;
+  document.getElementById('editBarId').value = barId;
+  document.getElementById('editBoards').value = bar.boards || '';
+  document.getElementById('editPrice').value = bar.price || '';
+  document.getElementById('editBeer').value = bar.beer || '';
+  document.getElementById('editHours').value = bar.hours || '';
+  document.getElementById('editComment').value = '';
+  document.getElementById('editModal').style.display = 'flex';
+}
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+}
+function submitEdit() {
+  const barId = document.getElementById('editBarId').value;
+  const bar = bars.find(b => b.id === Number(barId));
+  const data = {
+    _subject: `Redigering: ${bar ? bar.name : barId}`,
+    typ: 'redigering',
+    barnamn: bar ? bar.name : '',
+    stad: bar ? bar.city : '',
+    tavlor: document.getElementById('editBoards').value,
+    pris: document.getElementById('editPrice').value,
+    ölpris: document.getElementById('editBeer').value,
+    öppettider: document.getElementById('editHours').value,
+    kommentar: document.getElementById('editComment').value,
+  };
+  fetch('https://formspree.io/f/mpqyknrp', {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+  }).then(r => {
+    if (r.ok) {
+      document.querySelector('.edit-modal-box').innerHTML = `
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:2rem;margin-bottom:8px">✅</div>
+          <h3 style="color:var(--text)">Tack!</h3>
+          <p style="color:var(--muted);font-size:0.85rem">Ditt ändringsförslag har skickats.</p>
+          <button class="edit-modal-submit" onclick="closeEditModal()" style="margin-top:16px">Stäng</button>
+        </div>`;
+    } else {
+      alert('Något gick fel. Försök igen!');
+    }
+  }).catch(() => alert('Kunde inte skicka. Kolla din internetanslutning.'));
 }
 
 // ──────────────────────────────────────────
