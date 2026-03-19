@@ -1044,6 +1044,7 @@
         <div class="filter-chip city-chip" onclick="setCity('Karlstad', this)">Karlstad</div>
         <div class="filter-chip city-chip" onclick="setCity('Borås', this)">Borås</div>
         <div class="filter-chip city-chip" onclick="setCity('Falkenberg', this)">Falkenberg</div>
+        <div class="filter-chip city-chip" onclick="setCity('Eksjö', this)">Eksjö</div>
       </div>
     </div>
     <div class="list-toggle">
@@ -1735,6 +1736,15 @@ const bars = [
     open:true, verified:false, beer:"59 kr",
     note:"2 bristoltavlor."
   },
+  // ── EKSJÖ ──
+  {
+    id:63, name:"Eksjö Bowling", city:"Eksjö",
+    lat:57.6722, lng:14.9756,
+    address:"Kaserngatan 30, Eksjö", boards:3, price:"235 kr", priceType:"bana",
+    type:"Bristol Autoscoring", hours:"Efter bokning",
+    open:true, verified:false, beer:"80 kr",
+    note:"3 bristoltavlor med autoscoring. Bokning krävs."
+  },
   // ── TORSLANDA ──
   {
     id:38, name:"Restaurang Hörnet", city:"Torslanda",
@@ -2338,6 +2348,7 @@ function setCity(city, el) {
     'Karlstad': [[59.379, 13.504], 13],
     'Borås': [[57.721, 12.940], 13],
     'Falkenberg': [[56.898, 12.471], 13],
+    'Eksjö': [[57.672, 14.976], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
