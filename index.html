@@ -1885,35 +1885,65 @@ function startGame() {
 }
 
 function getCheckout(liveScore, dartsLeft) {
-  let co = (outRule === 'dubbel') ? CHECKOUTS[liveScore] : null;
-  if (co && dartsLeft < co.split(' ').length) {
-    co = null;
-    if (dartsLeft === 1) {
-      if (liveScore === 50) co = 'Bull';
-      else if (liveScore <= 40 && liveScore % 2 === 0) co = 'D' + (liveScore/2);
-    } else if (dartsLeft === 2) {
-      const twoCheck = CHECKOUTS[liveScore];
-      if (twoCheck && twoCheck.split(' ').length <= 2) co = twoCheck;
-      else {
-        for (let s = 1; s <= 20; s++) {
-          const rem = liveScore - s;
-          if (rem === 50) { co = 'S'+s+' Bull'; break; }
-          if (rem > 0 && rem <= 40 && rem % 2 === 0) { co = 'S'+s+' D'+(rem/2); break; }
-        }
-        if (!co) for (let d = 1; d <= 20; d++) {
-          const rem = liveScore - d*2;
-          if (rem === 50) { co = 'D'+d+' Bull'; break; }
-          if (rem > 0 && rem <= 40 && rem % 2 === 0) { co = 'D'+d+' D'+(rem/2); break; }
-        }
-        if (!co) for (let t = 1; t <= 20; t++) {
-          const rem = liveScore - t*3;
-          if (rem === 50) { co = 'T'+t+' Bull'; break; }
-          if (rem > 0 && rem <= 40 && rem % 2 === 0) { co = 'T'+t+' D'+(rem/2); break; }
-        }
-      }
+  if (liveScore <= 0 || liveScore > 170) return null;
+  if (outRule !== 'dubbel') {
+    // Enkel utgång: vilken kombination som helst
+    if (dartsLeft >= 1 && liveScore <= 60) return 'S'+liveScore;
+    return null;
+  }
+  // Dubbel ut
+  let co = CHECKOUTS[liveScore];
+  if (co && co.split(' ').length <= dartsLeft) return co;
+
+  // Beräkna dynamiskt baserat på pilar kvar
+  if (dartsLeft === 1) {
+    if (liveScore === 50) return 'Bull';
+    if (liveScore <= 40 && liveScore % 2 === 0) return 'D' + (liveScore/2);
+    return null;
+  }
+  if (dartsLeft === 2) {
+    // Kolla om CHECKOUTS har 2-pils variant
+    if (co && co.split(' ').length <= 2) return co;
+    // Prova singles
+    for (let s = 1; s <= 20; s++) {
+      const rem = liveScore - s;
+      if (rem === 50) return 'S'+s+' Bull';
+      if (rem > 0 && rem <= 40 && rem % 2 === 0) return 'S'+s+' D'+(rem/2);
+    }
+    // Prova 25 (outer)
+    if (liveScore - 25 > 0 && liveScore - 25 <= 40 && (liveScore-25) % 2 === 0) return 'S25 D'+((liveScore-25)/2);
+    // Prova doubles
+    for (let d = 1; d <= 20; d++) {
+      const rem = liveScore - d*2;
+      if (rem === 50) return 'D'+d+' Bull';
+      if (rem > 0 && rem <= 40 && rem % 2 === 0) return 'D'+d+' D'+(rem/2);
+    }
+    // Prova triples
+    for (let t = 1; t <= 20; t++) {
+      const rem = liveScore - t*3;
+      if (rem === 50) return 'T'+t+' Bull';
+      if (rem > 0 && rem <= 40 && rem % 2 === 0) return 'T'+t+' D'+(rem/2);
+    }
+    return null;
+  }
+  // 3 pilar kvar — använd CHECKOUTS-tabellen eller beräkna
+  if (co) return co;
+  // Fallback: prova hitta 3-pilsväg
+  for (let t = 20; t >= 1; t--) {
+    const rem = liveScore - t*3;
+    if (rem > 0 && rem <= 170) {
+      const sub = getCheckout(rem, 2);
+      if (sub) return 'T'+t+' '+sub;
     }
   }
-  return co;
+  for (let s = 20; s >= 1; s--) {
+    const rem = liveScore - s;
+    if (rem > 0 && rem <= 170) {
+      const sub = getCheckout(rem, 1);
+      if (sub) return 'S'+s+' '+sub;
+    }
+  }
+  return null;
 }
 
 const isMobile = () => window.innerWidth <= 700;
