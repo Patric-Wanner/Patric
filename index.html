@@ -1769,23 +1769,32 @@ function initBottomSheet() {
 
   let startY = 0, isDragging = false;
 
-  // Tap on sidebar-top area (not on interactive elements) toggles sheet
+  // Search input focus → open sheet
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('focus', () => {
+      sidebar.classList.add('sheet-open');
+    });
+  }
+
+  // Tap on sidebar area toggles sheet
   sidebar.addEventListener('click', (e) => {
     if (e.target.closest('.bar-card')) {
       setTimeout(() => sidebar.classList.remove('sheet-open'), 300);
       return;
     }
-    if (e.target.closest('.filter-chip, .city-chip, .search-input')) return;
-    // If tapping on the handle/sidebar-top area, toggle
-    if (e.target.closest('.sidebar-top') || !e.target.closest('.bar-list')) {
-      const rect = sidebar.getBoundingClientRect();
-      if (e.clientY - rect.top < 120) {
-        sidebar.classList.toggle('sheet-open');
+    if (e.target.closest('.filter-chip, .city-chip, .search-input')) {
+      // Filter/city chips should also open the sheet
+      if (!e.target.closest('.search-input')) {
+        sidebar.classList.add('sheet-open');
       }
+      return;
     }
+    // Tapping anywhere on the visible sidebar toggles it
+    sidebar.classList.toggle('sheet-open');
   });
 
-  // Swipe up/down on the entire visible part of closed sidebar
+  // Swipe up/down
   sidebar.addEventListener('touchstart', (e) => {
     const isOnScrollable = e.target.closest('.bar-list');
     const isSheetOpen = sidebar.classList.contains('sheet-open');
