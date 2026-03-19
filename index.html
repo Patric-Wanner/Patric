@@ -1565,6 +1565,23 @@ function initZoomLock() {
     }
   }, { passive: false });
 
+  // Block double-tap zoom everywhere except map
+  let lastTap = 0;
+  document.addEventListener('touchend', function(e) {
+    if (e.target.closest('#map')) return;
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      e.preventDefault();
+    }
+    lastTap = now;
+  }, { passive: false });
+
+  // Block double-click zoom
+  document.addEventListener('dblclick', function(e) {
+    if (e.target.closest('#map')) return;
+    e.preventDefault();
+  }, { passive: false });
+
   // Block gesture zoom (iOS)
   document.addEventListener('gesturestart', function(e) {
     if (e.target.closest('#map')) return;
