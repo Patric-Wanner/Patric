@@ -1041,6 +1041,7 @@
         <div class="filter-chip city-chip" onclick="setCity('Karlskoga', this)">Karlskoga</div>
         <div class="filter-chip city-chip" onclick="setCity('Karlstad', this)">Karlstad</div>
         <div class="filter-chip city-chip" onclick="setCity('Borås', this)">Borås</div>
+        <div class="filter-chip city-chip" onclick="setCity('Falkenberg', this)">Falkenberg</div>
       </div>
     </div>
     <div class="list-toggle">
@@ -1959,6 +1960,12 @@ const clubs = [
     day:"Se Facebook", time:"Se Facebooksida, Flamingo DC", price:"Gratis",
     contact:"", note:"7 bristoltavlor. Gratis att spela."
   },
+  {
+    id:6, name:"Falkenberg DartKlubb", city:"Falkenberg",
+    barId:null, lat:56.8975, lng:12.4714,
+    day:"Tisdag & Torsdag", time:"Tisdag 19–21, Torsdag 18–20", price:"75 kr",
+    contact:"Facebook/Falkenbergsdartklubb", note:"Badhusvägen 52, Falkenberg. Pris per gång 75 kr."
+  },
 ];
 
 let activeFilter = 'alla';
@@ -2328,6 +2335,7 @@ function setCity(city, el) {
     'Karlskoga': [[59.327, 14.521], 13],
     'Karlstad': [[59.379, 13.504], 13],
     'Borås': [[57.721, 12.940], 13],
+    'Falkenberg': [[56.898, 12.471], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
