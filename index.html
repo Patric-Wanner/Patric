@@ -950,6 +950,7 @@
         <div class="filter-chip city-chip" onclick="setCity('Norrköping', this)">Norrköping</div>
         <div class="filter-chip city-chip" onclick="setCity('Uddevalla', this)">Uddevalla</div>
         <div class="filter-chip city-chip" onclick="setCity('Örebro', this)">Örebro</div>
+        <div class="filter-chip city-chip" onclick="setCity('Umeå', this)">Umeå</div>
       </div>
     </div>
     <div class="results-label" id="resultsLabel">Visar alla barer</div>
@@ -1622,6 +1623,15 @@ const bars = [
     open:true, verified:false, beer:"65 kr",
     note:"4 bristoltavlor. Gratis att spela med egna pilar."
   },
+  // ── UMEÅ ──
+  {
+    id:50, name:"O'Learys Umeå", city:"Umeå",
+    lat:63.8258, lng:20.2630,
+    address:"Skolgatan 64, 903 29 Umeå", boards:3, price:"199 kr/tim", priceType:"bana",
+    type:"Bristol Autoscoring", hours:"Mån–Tis 11–23, Ons 11–01, Tor 11–23, Fre 11–02, Lör 11:30–02, Sön 11:30–23",
+    open:true, verified:false, beer:"89 kr",
+    note:"3 bristoltavlor med autoscoring. Stort nöjescenter med bowling, biljard, shuffleboard och mer."
+  },
   // ── STOCKHOLM (fler) ──
   {
     id:48, name:"Mini Dart & Barevent", city:"Stockholm",
@@ -1791,6 +1801,7 @@ function setCity(city, el) {
     'Norrköping': [[58.590, 16.183], 13],
     'Uddevalla': [[58.349, 11.934], 13],
     'Örebro': [[59.275, 15.210], 13],
+    'Umeå': [[63.826, 20.263], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
