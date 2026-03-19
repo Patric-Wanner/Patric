@@ -1946,42 +1946,42 @@ const bars = [
 const clubs = [
   {
     id:1, name:"Bowlers Dart Club", city:"Borås",
-    barId:59, day:"Onsdag", time:"18:00–20:00", price:"50 kr/pers",
+    barId:59, boards:0, day:"Onsdag", time:"18:00–20:00", price:"50 kr/pers",
     social:"", web:"", phone:"", note:"Inga förkunskaper behövs."
   },
   {
     id:2, name:"Västerviks Dartklubb", city:"Västervik",
-    barId:null, lat:57.7584, lng:16.6373,
+    barId:null, lat:57.7584, lng:16.6373, boards:5,
     day:"Dygnet runt", time:"24/7", price:"20 kr",
-    social:"", web:"", phone:"", note:"5 bristoltavlor. Öppet dygnet runt!"
+    social:"", web:"", phone:"", note:"Öppet dygnet runt!"
   },
   {
     id:3, name:"Borlänge Dart Club", city:"Borlänge",
-    barId:null, lat:60.4774, lng:15.4313,
+    barId:null, lat:60.4774, lng:15.4313, boards:14,
     day:"Måndag & Torsdag", time:"Mån 17–20, Tor 17–22", price:"Gratis",
-    social:"", web:"", phone:"", note:"14 bristoltavlor! Gratis spel."
+    social:"", web:"", phone:"", note:"Gratis spel."
   },
   {
     id:4, name:"Sandvikens Dart Klubb", city:"Sandviken",
-    barId:null, lat:60.6198, lng:16.7756,
+    barId:null, lat:60.6198, lng:16.7756, boards:6,
     day:"Tisdag & Torsdag", time:"Tis 17–22, Tor 17–22", price:"Gratis/60 kr",
-    social:"", web:"", phone:"", note:"6 bristoltavlor."
+    social:"", web:"", phone:"", note:""
   },
   {
     id:5, name:"Flamingo Dartklubb", city:"Karlskoga",
-    barId:null, lat:59.3267, lng:14.5208,
+    barId:null, lat:59.3267, lng:14.5208, boards:7,
     day:"Se Facebook", time:"Se Facebooksida, Flamingo DC", price:"Gratis",
-    social:"", web:"", phone:"", note:"7 bristoltavlor. Gratis att spela."
+    social:"", web:"", phone:"", note:"Gratis att spela."
   },
   {
     id:6, name:"Falkenberg DartKlubb", city:"Falkenberg",
-    barId:null, lat:56.8975, lng:12.4714,
+    barId:null, lat:56.8975, lng:12.4714, boards:0,
     day:"Tisdag & Torsdag", time:"Tisdag 19–21, Torsdag 18–20", price:"75 kr",
     social:"Facebook/Falkenbergsdartklubb", web:"", phone:"", note:"Badhusvägen 52, Falkenberg. Pris per gång 75 kr."
   },
   {
     id:7, name:"Ludvika DC", city:"Ludvika",
-    barId:null, lat:60.1508, lng:15.1870,
+    barId:null, lat:60.1508, lng:15.1870, boards:0,
     day:"Tisdag & Fredag", time:"Tisdag 17:30–21:00, Fredag 17:00–22:00", price:"Gratis",
     social:"https://www.facebook.com/groups/519812684885667", web:"", phone:"", note:"Storgatan 15, Ludvika."
   },
@@ -2178,7 +2178,7 @@ function buildPopup(bar) {
           <div class="club-section-title">🏆 Klubbar som spelar här</div>
           ${barClubs.map(c => `<div class="club-entry">
             <strong>${c.name}</strong><br>
-            <span>📅 ${c.day} ${c.time}</span>${c.price ? ` · <span>💰 ${c.price}</span>` : ''}
+            ${c.boards ? `<span>🎯 ${c.boards} tavlor</span><br>` : ''}<span>📅 ${c.day} ${c.time}</span>${c.price ? ` · <span>💰 ${c.price}</span>` : ''}
             ${c.note ? `<br><span style="font-style:italic">${c.note}</span>` : ''}
             ${c.social ? `<br><a href="${c.social.startsWith('http') ? c.social : 'https://' + c.social}" target="_blank" style="color:#4ade80;font-size:0.75rem;text-decoration:none">📱 ${c.social}</a>` : ''}
             ${c.web ? `<br><a href="${c.web.startsWith('http') ? c.web : 'https://' + c.web}" target="_blank" style="color:var(--accent);font-size:0.75rem;text-decoration:none">🌐 ${c.web}</a>` : ''}
@@ -2199,6 +2199,7 @@ function buildClubPopup(club) {
       <div class="popup-name" style="color:#4ade80">🏆 ${club.name}</div>
       <div class="popup-city">📍 ${club.city}</div>
       ${linkedBar ? `<div class="popup-row"><span class="popup-label">Spelar på</span><span class="popup-val">${linkedBar.name}</span></div>` : ''}
+      ${club.boards ? `<div class="popup-row"><span class="popup-label">Tavlor</span><span class="popup-val">${club.boards} st</span></div>` : ''}
       <div class="popup-row"><span class="popup-label">Dag</span><span class="popup-val">${club.day}</span></div>
       <div class="popup-row"><span class="popup-label">Tid</span><span class="popup-val">${club.time}</span></div>
       ${club.price ? `<div class="popup-row"><span class="popup-label">Pris</span><span class="popup-val yellow">${club.price}</span></div>` : ''}
@@ -2385,6 +2386,7 @@ function renderClubList() {
         <div class="bar-name" style="color:#4ade80">🏆 ${club.name}</div>
         <div class="bar-city">📍 ${club.city}${linkedBar ? ` · ${linkedBar.name}` : ''}</div>
         <div class="bar-meta">
+          ${club.boards ? `<span class="badge boards">🎯 ${club.boards} tavlor</span>` : ''}
           <span class="badge boards">📅 ${club.day} ${club.time}</span>
           ${club.price ? `<span class="badge price">💰 ${club.price}</span>` : ''}
         </div>
