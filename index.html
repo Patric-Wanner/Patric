@@ -7,15 +7,15 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Dartkartan – Hitta dartbarer nära dig | 50+ ställen i Sverige</title>
-  <meta name="description" content="Var kan man kasta dart? Dartkartan visar 50+ barer med darttavlor i Göteborg, Malmö, Stockholm, Uppsala och fler städer. Priser, öppettider, ölpriser och inbyggd dartscorer." />
+  <title>Dartkartan – Hitta dartbarer nära dig | 55+ ställen i Sverige</title>
+  <meta name="description" content="Var kan man kasta dart? Dartkartan visar 55+ barer med darttavlor i Göteborg, Malmö, Stockholm, Uppsala och fler städer. Priser, öppettider, ölpriser och inbyggd dartscorer." />
   <meta name="author" content="Dartkartan.se" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://dartkartan.se/" />
 
   <!-- Open Graph (Facebook, Discord m.m.) -->
   <meta property="og:title" content="Dartkartan – Hitta barer med darttavlor i Sverige" />
-  <meta property="og:description" content="Interaktiv karta över 50+ dartbarer i Sverige. Priser, öppettider, ölpriser och inbyggd scorer." />
+  <meta property="og:description" content="Interaktiv karta över 55+ dartbarer i Sverige. Priser, öppettider, ölpriser och inbyggd scorer." />
   <meta property="og:url" content="https://dartkartan.se/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="sv_SE" />
@@ -23,7 +23,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Dartkartan – Hitta barer med darttavlor i Sverige" />
-  <meta name="twitter:description" content="50+ dartbarer i Sverige. Priser, öppettider och inbyggd scorer." />
+  <meta name="twitter:description" content="55+ dartbarer i Sverige. Priser, öppettider och inbyggd scorer." />
 
   <!-- Strukturerad data för Google -->
   <script type="application/ld+json">
@@ -1047,6 +1047,10 @@
         <div class="filter-chip city-chip" onclick="setCity('Eksjö', this)">Eksjö</div>
         <div class="filter-chip city-chip" onclick="setCity('Ludvika', this)">Ludvika</div>
         <div class="filter-chip city-chip" onclick="setCity('Haninge', this)">Haninge</div>
+        <div class="filter-chip city-chip" onclick="setCity('Skene', this)">Skene</div>
+        <div class="filter-chip city-chip" onclick="setCity('Ulricehamn', this)">Ulricehamn</div>
+        <div class="filter-chip city-chip" onclick="setCity('Lidköping', this)">Lidköping</div>
+        <div class="filter-chip city-chip" onclick="setCity('Enköping', this)">Enköping</div>
       </div>
     </div>
     <div class="list-toggle">
@@ -1874,10 +1878,10 @@ const bars = [
   {
     id:52, name:"Tdc", city:"Södertälje",
     lat:59.1955, lng:17.6253,
-    address:"Täppgatan 12, Södertälje", boards:11, price:"Gratis/1ggr sen medlem 150/år", priceType:"bana",
+    address:"Täppgatan 12, Södertälje", boards:11, price:"Gratis/1ggr sen medlem 200 kr/år", priceType:"bana",
     type:"Bristoltavla", hours:"Tis, Ons, Tor 17:30–, Lör 14:00–",
     open:true, verified:false, beer:"40–50 kr",
-    note:"11 bristoltavlor. Gratis första gången, sedan medlemskap 150 kr/år."
+    note:"11 bristoltavlor. Ideel förening. Gratis första gången, sedan medlemskap 200 kr/år."
   },
   // ── ESKILSTUNA ──
   {
@@ -1947,6 +1951,51 @@ const bars = [
     open:true, verified:false, beer:"",
     note:"8 bristoltavlor. Ligger i Haninge Centrum."
   },
+  // ── VÄSTRA FRÖLUNDA (Göteborg) ──
+  {
+    id:66, name:"Opalen Krog", city:"Göteborg",
+    lat:57.6417, lng:11.9011,
+    address:"Ametistgatan 10, Västra Frölunda", boards:2, price:"Gratis", priceType:"bana",
+    type:"Bristoltavla", hours:"Mån\u2013Tors 11:00\u201322:00, Fre 11:00\u201324:00, Lör 12:00\u201324:00, Sön 12:00\u201321:00",
+    open:true, verified:false, beer:"",
+    note:"2 bristoltavlor. Gratis dart."
+  },
+  // ── SKENE ──
+  {
+    id:67, name:"Marks Bowling", city:"Skene",
+    lat:57.4970, lng:12.6684,
+    address:"Klevagårdsgatan 4, Skene", boards:2, price:"", priceType:"bana",
+    type:"Bristoltavla", hours:"Mån 11:00\u201321:00, Tis Stängt, Ons 11:00\u201320:00, Tor 14:00\u201321:00, Fre 11:00\u201301:30, Lör 13:00\u201301:30, Sön 11:00\u201316:00",
+    open:true, verified:false, beer:"",
+    note:"2 bristoltavlor."
+  },
+  // ── ULRICEHAMN ──
+  {
+    id:68, name:"KW Bowling", city:"Ulricehamn",
+    lat:57.7882, lng:13.4086,
+    address:"Fiskaregatan 7, Ulricehamn", boards:3, price:"150\u2013190 kr/timme", priceType:"bana",
+    type:"Bristol Autoscoring", hours:"Ons 17\u201320, Tor 17\u201321, Fre 17\u201323, Lör 12\u201323, Sön 12\u201318",
+    open:true, verified:false, beer:"71 kr",
+    note:"3 bristoltavlor med autoscoring."
+  },
+  // ── LIDKÖPING ──
+  {
+    id:69, name:"STURES Krog", city:"Lidköping",
+    lat:58.5029, lng:13.1623,
+    address:"Gamla Stadens Torg 5, Lidköping", boards:9, price:"Cirka 200 kr/timme", priceType:"bana",
+    type:"Bristoltavla", hours:"Alla dagar till sent, fre & lör till 02:00",
+    open:true, verified:false, beer:"69 kr",
+    note:"9 bristoltavlor."
+  },
+  // ── SÖDERTÄLJE ──
+  {
+    id:70, name:"GMR Biljard & Darts", city:"Södertälje",
+    lat:59.2082, lng:17.6599,
+    address:"Klastorpsvägen 11, Södertälje", boards:1, price:"80 kr/timme", priceType:"bana",
+    type:"Bristoltavla", hours:"Mån\u2013Sön 14:00\u201302:00",
+    open:true, verified:false, beer:"",
+    note:"1 bristoltavla."
+  },
 
 ];
 
@@ -2000,6 +2049,12 @@ const clubs = [
     barId:63, boards:0,
     day:"Alla dagar", time:"Se Instagram", price:"200 kr/medlemskap",
     social:"https://www.instagram.com/dif_dart/", web:"", phone:"", note:"Spelar på Memory Lane Sportsbar."
+  },
+  {
+    id:9, name:"Haga Hogs DC", city:"Enköping",
+    barId:null, lat:59.6463, lng:17.0860, boards:0,
+    day:"Måndag", time:"17:00\u201320:00", price:"Gratis",
+    social:"https://www.facebook.com/groups/1114749182495987", web:"", phone:"", note:"Östra Järnvägsgatan 3, Enköping."
   },
 ];
 
@@ -2478,6 +2533,10 @@ function setCity(city, el) {
     'Eksjö': [[57.672, 14.976], 13],
     'Ludvika': [[60.151, 15.187], 13],
     'Haninge': [[59.158, 18.137], 13],
+    'Skene': [[57.497, 12.668], 13],
+    'Ulricehamn': [[57.788, 13.409], 13],
+    'Lidköping': [[58.503, 13.162], 13],
+    'Enköping': [[59.646, 17.086], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
