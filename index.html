@@ -1073,8 +1073,10 @@
         <div class="filter-chip city-chip" onclick="setCity('Karlstad', this)">Karlstad</div>
         <div class="filter-chip city-chip" onclick="setCity('Kungsbacka', this)">Kungsbacka</div>
         <div class="filter-chip city-chip" onclick="setCity('Borås', this)">Borås</div>
+        <div class="filter-chip city-chip" onclick="setCity('Bålsta', this)">Bålsta</div>
         <div class="filter-chip city-chip" onclick="setCity('Falkenberg', this)">Falkenberg</div>
         <div class="filter-chip city-chip" onclick="setCity('Falköping', this)">Falköping</div>
+        <div class="filter-chip city-chip" onclick="setCity('Falun', this)">Falun</div>
         <div class="filter-chip city-chip" onclick="setCity('Eksjö', this)">Eksjö</div>
         <div class="filter-chip city-chip" onclick="setCity('Ludvika', this)">Ludvika</div>
         <div class="filter-chip city-chip" onclick="setCity('Haninge', this)">Haninge</div>
@@ -2805,6 +2807,24 @@ const bars = [
     open:true, verified:false, beer:"",
     note:"6 bristoltavlor. Gratis spel."
   },
+  // ── BÅLSTA ──
+  {
+    id:115, name:"Bowlroom", city:"Bålsta",
+    lat:59.5665, lng:17.5272,
+    address:"Centrumgränd 5, 746 32 Bålsta", boards:6, price:"50 kr", priceType:"bana",
+    type:"Bristoltavla", hours:"Tis\u2013Ons 17\u201321, Tor 16\u201322, Fre 13\u201301, Lör 12\u201301, Sön 12\u201317, Mån Stängt",
+    open:true, verified:false, beer:"79 kr/40cl",
+    note:""
+  },
+  // ── ÖREBRO (fler) ──
+  {
+    id:116, name:"Strike & Co", city:"Örebro",
+    lat:59.2550, lng:15.1746,
+    address:"Nastagatan 11, Örebro", boards:8, price:"", priceType:"bana",
+    type:"Bristoltavla", hours:"Mån\u2013Ons 11\u201322, Tor 11\u201323, Fre\u2013Lör 11\u201301, Sön 11\u201320",
+    open:true, verified:false, beer:"",
+    note:"8 bristoltavlor. Gratis spel."
+  },
 
 ];
 
@@ -2888,6 +2908,12 @@ const clubs = [
     barId:null, lat:57.7205, lng:11.9971, boards:0,
     day:"", time:"", price:"",
     social:"https://www.instagram.com/gads_2023/", web:"", phone:"0730-615556", note:"Blomstergatan 2, Göteborg. Grundad 2023. Spelar i Riksserien. Kontakt: styrelsen.gads@gmail.com"
+  },
+  {
+    id:14, name:"Slaggpilen DC", city:"Falun",
+    barId:null, lat:60.6014, lng:15.6298, boards:0,
+    day:"Onsdag", time:"18:00\u201322:00", price:"60 kr",
+    social:"https://www.facebook.com/groups/dartifalun", web:"", phone:"0737482141", note:"Sturegatan 45, Falun. 60 kr/gång."
   },
 ];
 
@@ -3393,6 +3419,8 @@ function setCity(city, el) {
     'Vänersborg': [[58.380, 12.324], 13],
     'Sundbyberg': [[59.364, 17.968], 13],
     'Täby': [[59.450, 18.120], 13],
+    'Bålsta': [[59.567, 17.527], 13],
+    'Falun': [[60.601, 15.630], 13],
   };
   const cc = cityCoords[city];
   if (cc) map.flyTo(cc[0], cc[1], {duration:1});
