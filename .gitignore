@@ -1,0 +1,6 @@
+# Cloudflare Worker – beroenden och lokal wrangler-state
+cloudflare-worker/node_modules/
+cloudflare-worker/.wrangler/
+
+# Lokala verktygsinställningar
+.claude/

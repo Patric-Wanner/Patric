@@ -1,0 +1,13 @@
+name = "dartkartan-forms"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+# Route — Workern svarar på dartkartan.se/api/*
+routes = [
+  { pattern = "dartkartan.se/api/*", zone_id = "bd1660fa168d4ed36d2a407439f95a39" }
+]
+
+# KV — formulär lagras här, kolla i Cloudflare Dashboard → KV
+[[kv_namespaces]]
+binding = "FORMS"
+id = "dc86309107524f5fb994ff088723a9f9"
