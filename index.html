@@ -52,28 +52,126 @@
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
+      color-scheme: dark;
+
+      /* Ytor */
       --bg: #0d0d0f;
       --surface: #16161a;
       --surface2: #1e1e24;
-      --accent: #e8ff47;
-      --accent2: #ff4757;
+      --surface3: #26262e;
+      --overlay-bg: rgba(13,13,15,0.9);
+      --header-bg: rgba(13,13,15,0.92);
+
+      /* Text */
       --text: #f0f0f0;
-      --muted: #888;
-      --border: rgba(255,255,255,0.07);
+      --muted: #a8a8ad;
+      --text-3: #85858c;
+
+      /* Accenter */
+      --accent: #e8ff47;
+      --accent-ink: #0d0d0f;
+      --accent-text: #e8ff47;
+      --accent2: #ff4757;
+      --success: #4ade80;
+      --success-text: #4ade80;
+      --info-text: #7dd3fc;
+      --marker-ring: #0d0d0f;
+
+      /* Linjer */
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.18);
+
+      /* Typografi */
+      --fs-xs: 0.72rem;
+      --fs-sm: 0.8rem;
+      --fs-base: 0.9rem;
+      --fs-md: 1rem;
+      --fs-lg: 1.15rem;
+      --fs-xl: 1.5rem;
+
+      /* Rum */
+      --sp-1: 4px;
+      --sp-2: 8px;
+      --sp-3: 12px;
+      --sp-4: 16px;
+      --sp-5: 24px;
+
+      /* Form */
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 14px;
+      --r-pill: 999px;
+      --shadow-1: 0 2px 8px rgba(0,0,0,0.3);
+      --shadow-2: 0 20px 60px rgba(0,0,0,0.6);
+      --tap: 44px;
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f6f6f4;
+      --surface: #ffffff;
+      --surface2: #f0f0ed;
+      --surface3: #e4e4e0;
+      --overlay-bg: rgba(255,255,255,0.92);
+      --header-bg: rgba(246,246,244,0.92);
+      --text: #17171a;
+      --muted: #54545c;
+      --text-3: #74747c;
+      --accent-ink: #1a1d00;
+      --accent-text: #5f6b00;
+      --success-text: #15803d;
+      --info-text: #0369a1;
+      --marker-ring: #ffffff;
+      --border: rgba(0,0,0,0.10);
+      --border-strong: rgba(0,0,0,0.22);
+      --shadow-1: 0 2px 8px rgba(0,0,0,0.10);
+      --shadow-2: 0 20px 60px rgba(0,0,0,0.18);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* Synlig fokusmarkering - webblasarens standardring ar osynlig pa morkt tema */
+    :focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+      border-radius: var(--r-sm);
+    }
+    .leaflet-container :focus-visible { box-shadow: 0 0 0 3px var(--accent); }
+
+    button { font: inherit; color: inherit; user-select: none; }
+    button, [role="button"], input, select, textarea, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
 
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
     }
 
@@ -82,7 +180,7 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 1000;
-      background: rgba(13,13,15,0.92);
+      background: var(--header-bg);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
@@ -108,7 +206,7 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.8rem;
       letter-spacing: 0.05em;
-      color: var(--accent);
+      color: var(--accent-text);
     }
 
     .logo-text span {
@@ -123,7 +221,7 @@
 
     .btn-add {
       background: var(--accent);
-      color: #0d0d0f;
+      color: var(--accent-ink);
       border: none;
       padding: 8px 18px;
       border-radius: 6px;
@@ -138,7 +236,7 @@
     /* LAYOUT */
     .app {
       display: flex;
-      height: 100vh;
+      height: 100dvh;
       padding-top: 64px;
     }
 
@@ -206,12 +304,70 @@
       transition: all 0.2s;
       white-space: nowrap;
     }
-    .filter-chip.active, .filter-chip:hover {
+    .filter-chip:hover {
+      background: var(--surface3);
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+    .filter-chip.active {
       background: var(--accent);
-      color: #0d0d0f;
+      color: var(--accent-ink);
       border-color: var(--accent);
       font-weight: 600;
     }
+    .filter-chip.active:hover { background: var(--accent); color: var(--accent-ink); }
+
+    /* STADSFILTER */
+    .city-filter {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .city-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
+      scroll-snap-type: x proximity;
+    }
+    .city-row::-webkit-scrollbar { display: none; }
+    .city-row .filter-chip { flex: none; scroll-snap-align: start; }
+    .chip-count {
+      font-size: 0.68rem;
+      opacity: 0.65;
+      font-variant-numeric: tabular-nums;
+    }
+    .city-select-wrap { position: relative; }
+    #citySelect {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--muted);
+      padding: 8px 34px 8px 12px;
+      font-family: inherit;
+      font-size: var(--fs-sm);
+      min-height: 36px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #citySelect:hover { border-color: var(--border-strong); color: var(--text); }
+    #citySelect option { background: var(--surface2); color: var(--text); }
+    .city-select-chevron {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+    @media (hover: none) { #citySelect { min-height: var(--tap); } }
 
     .results-label {
       padding: 0.75rem 1.25rem 0.5rem;
@@ -231,6 +387,11 @@
     .bar-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
     .bar-card {
+      display: block;
+      width: 100%;
+      text-align: left;
+      font: inherit;
+      color: inherit;
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -285,9 +446,9 @@
       padding: 3px 8px;
       font-size: 0.75rem;
     }
-    .badge.price { color: var(--accent); }
-    .badge.boards { color: #7dd3fc; }
-    .badge.open { color: #4ade80; }
+    .badge.price { color: var(--accent-text); }
+    .badge.boards { color: var(--info-text); }
+    .badge.open { color: var(--success-text); }
     .badge.closed { color: var(--accent2); }
 
     .distance-badge {
@@ -296,6 +457,46 @@
       right: 10px;
       font-size: 0.72rem;
       color: var(--muted);
+    }
+
+    /* IKONER */
+    .icon {
+      width: 1em; height: 1em;
+      flex: none;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vertical-align: -0.125em;
+    }
+    .icon-lg { width: 1.25em; height: 1.25em; }
+    .icon-fill { fill: currentColor; stroke: none; }
+
+    .btn-add, .list-toggle-btn, .form-tab, .btn-edit-popup, .btn-submit, .edit-modal-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-ghost-accent {
+      background: var(--surface2) !important;
+      color: var(--accent-text) !important;
+      border: 1px solid var(--accent) !important;
+    }
+    .marker-icon {
+      width: 17px; height: 17px;
+      fill: none; stroke: var(--marker-ring);
+      stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Tryckytor: minst 44px pa touch */
+    .btn-add, .list-toggle-btn, .form-tab { min-height: 36px; }
+    .filter-chip { min-height: 32px; display: inline-flex; align-items: center; gap: 5px; }
+    @media (hover: none) {
+      .btn-add, .list-toggle-btn, .form-tab, .btn-close,
+      .edit-modal-close, .mobile-close-sidebar, .btn-edit-popup { min-height: var(--tap); }
+      .filter-chip { min-height: 40px; padding: 6px 14px; }
     }
 
     /* MAP */
@@ -316,9 +517,18 @@
       border-color: var(--border) !important;
     }
     .leaflet-control-attribution {
-      background: rgba(13,13,15,0.8) !important;
+      background: var(--overlay-bg) !important;
       color: var(--muted) !important;
     }
+    .leaflet-control-attribution a {
+      color: var(--muted) !important;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .leaflet-control-attribution a:hover { color: var(--text) !important; }
+    /* Esri Dark Gray Canvas ligger ljusare an CARTO:s dark_all - tryck ner den mot svart */
+    .canvas-dark { filter: brightness(0.62) contrast(1.25); }
+    .canvas-dark-ref { filter: brightness(0.9); }
 
     /* POPUP */
     .leaflet-popup-content-wrapper {
@@ -335,7 +545,7 @@
       font-weight: 700;
       font-size: 1.05rem;
       margin-bottom: 2px;
-      color: var(--accent);
+      color: var(--accent-text);
     }
     .popup-city { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
     .popup-row {
@@ -349,8 +559,8 @@
     .popup-row:last-child { border-bottom: none; }
     .popup-label { color: var(--muted); }
     .popup-val { font-weight: 500; }
-    .popup-val.green { color: #4ade80; }
-    .popup-val.yellow { color: var(--accent); }
+    .popup-val.green { color: var(--success-text); }
+    .popup-val.yellow { color: var(--accent-text); }
 
     /* EDIT MODAL */
     .edit-modal {
@@ -383,7 +593,7 @@
     .edit-modal-close:hover { color: var(--text); }
     .edit-modal-submit {
       margin-top: 16px; width: 100%; padding: 10px;
-      background: var(--accent); color: #000; border: none;
+      background: var(--accent); color: var(--accent-ink); border: none;
       border-radius: 8px; font-weight: 600; font-size: 0.9rem;
       cursor: pointer; transition: opacity 0.2s;
     }
@@ -404,7 +614,7 @@
       right: 1rem;
       z-index: 999;
       background: var(--accent);
-      color: #0d0d0f;
+      color: var(--accent-ink);
       border: none;
       border-radius: 50%;
       width: 44px; height: 44px;
@@ -445,7 +655,7 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 999;
-      background: rgba(13,13,15,0.9);
+      background: var(--overlay-bg);
       backdrop-filter: blur(12px);
       border: 1px solid var(--border);
       border-radius: 50px;
@@ -462,7 +672,7 @@
     .stat-num {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.3rem;
-      color: var(--accent);
+      color: var(--accent-text);
       line-height: 1;
     }
     .stat-label {
@@ -498,7 +708,7 @@
     .modal h2 {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.8rem;
-      color: var(--accent);
+      color: var(--accent-text);
       margin-bottom: 1.25rem;
       letter-spacing: 0.05em;
     }
@@ -530,7 +740,7 @@
     .btn-submit {
       width: 100%;
       background: var(--accent);
-      color: #0d0d0f;
+      color: var(--accent-ink);
       border: none;
       border-radius: 8px;
       padding: 11px;
@@ -556,7 +766,7 @@
       height: 36px;
       border-radius: 50%;
       background: var(--accent);
-      border: 3px solid #0d0d0f;
+      border: 3px solid var(--marker-ring);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -572,26 +782,26 @@
     }
     .club-marker {
       width: 36px; height: 36px; border-radius: 50%;
-      background: #4ade80; border: 3px solid #0d0d0f;
+      background: var(--success); border: 3px solid var(--marker-ring);
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; box-shadow: 0 4px 16px rgba(74,222,128,0.4);
       cursor: pointer; transition: transform 0.2s;
     }
     .club-marker:hover { transform: scale(1.15); }
     .club-section { margin-top: 10px; padding: 8px 10px; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); border-radius: 8px; }
-    .club-section-title { font-size: 0.75rem; font-weight: 600; color: #4ade80; margin-bottom: 4px; }
+    .club-section-title { font-size: 0.75rem; font-weight: 600; color: var(--success-text); margin-bottom: 4px; }
     .club-entry { font-size: 0.78rem; color: var(--text); margin-top: 4px; }
     .club-entry span { color: var(--muted); }
 
     /* Sidebar list toggle */
     .list-toggle { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
     .list-toggle-btn { flex: 1; padding: 8px; text-align: center; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; font-size: 0.8rem; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-    .list-toggle-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .list-toggle-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
     /* Club days grid */
     .club-days-grid { display: flex; flex-direction: column; gap: 4px; }
     .club-day-row { display: grid; grid-template-columns: 22px 75px 1fr; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); padding: 4px 0; }
-    .club-day-row input[type="checkbox"] { accent-color: #4ade80; width: 18px; height: 18px; cursor: pointer; margin: 0; }
+    .club-day-row input[type="checkbox"] { accent-color: var(--success); width: 18px; height: 18px; cursor: pointer; margin: 0; }
     .club-day-row label { cursor: pointer; }
     .club-day-row input[type="checkbox"]:checked + label { color: var(--text); font-weight: 600; }
     .club-day-time { padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.82rem; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; width: 100%; box-sizing: border-box; }
@@ -600,7 +810,7 @@
     /* Form tabs */
     .form-tabs { display: flex; gap: 0; border-radius: 8px; overflow: hidden; margin-bottom: 1.2rem; }
     .form-tab { flex: 1; padding: 10px; text-align: center; background: var(--surface2); color: var(--muted); border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; font-weight: 600; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-    .form-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    .form-tab.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
     /* MOBILE */
     @media (max-width: 700px) {
@@ -645,7 +855,7 @@
       .filters { gap: 6px; margin-top: 8px; }
       .filter-chip { font-size: 0.72rem; padding: 3px 10px; }
       .results-label { padding: 0.4rem 1rem 0.2rem; }
-      .bar-list { max-height: calc(100vh - 250px); }
+      .bar-list { max-height: calc(100dvh - 250px); }
       .bar-card { padding: 0.75rem; }
 
       /* Mobile toggle button */
@@ -655,7 +865,7 @@
         bottom: 1rem; left: 50%; transform: translateX(-50%);
         z-index: 1099;
         background: var(--accent);
-        color: #0d0d0f;
+        color: var(--accent-ink);
         border: none;
         padding: 7px 18px;
         border-radius: 50px;
@@ -667,17 +877,27 @@
       }
       .mobile-bar-toggle.hidden { display: none !important; }
 
-      /* Close button for mobile sidebar */
+      /* Stang-knapp for mobillistan: egen rad langst upp, ligger kvar vid scroll */
       .mobile-close-sidebar {
-        display: block !important;
-        position: absolute;
-        top: 0.6rem; right: 1rem;
-        background: none;
+        display: flex !important;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: var(--tap);
+        padding: 0 1rem;
+        background: var(--surface);
         border: none;
+        border-bottom: 1px solid var(--border);
         color: var(--muted);
-        font-size: 1.5rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
         cursor: pointer;
-        z-index: 10;
+        z-index: 12;
       }
 
       .btn-locate { top: 0.5rem; right: 0.5rem; width: 40px; height: 40px; font-size: 1rem; }
@@ -992,6 +1212,30 @@
 </head>
 <body>
 
+<!-- IKON-SPRITE -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17.5V21M6 4h12v3.5a6 6 0 0 1-12 0V4z"/><path d="M6 6H4.2A2.2 2.2 0 0 0 4.2 10.4H6M18 6h1.8A2.2 2.2 0 0 1 19.8 10.4H18"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5S19 15 19 10.2a7 7 0 1 0-14 0C5 15 12 21.5 12 21.5z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.6v8.8M14.4 9.6c0-1-1.1-1.7-2.4-1.7s-2.4.7-2.4 1.7 1.1 1.7 2.4 1.7 2.4.8 2.4 1.8-1.1 1.8-2.4 1.8-2.4-.8-2.4-1.8"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.4V12l3 1.9"/></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><path d="M9 20.5 3.5 17.6V4.2L9 7.1l6-2.9 5.5 2.9v13.4L15 17.6z"/><path d="M9 7.1v13.4M15 4.2v13.4"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12.5 20.5H21"/><path d="M16.8 3.6a2.1 2.1 0 0 1 3 3L7.4 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M21 16.9v2.6a1.6 1.6 0 0 1-1.8 1.6 16 16 0 0 1-7-2.5 15.7 15.7 0 0 1-4.8-4.8 16 16 0 0 1-2.5-7A1.6 1.6 0 0 1 6.5 3h2.6a1.6 1.6 0 0 1 1.6 1.4c.1.9.3 1.7.6 2.5a1.6 1.6 0 0 1-.4 1.7l-1.1 1.1a12.8 12.8 0 0 0 4.8 4.8l1.1-1.1a1.6 1.6 0 0 1 1.7-.4c.8.3 1.6.5 2.5.6A1.6 1.6 0 0 1 21 16.9z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2M12 3.4c2.2 2.3 3.4 5.4 3.4 8.6S14.2 18.3 12 20.6c-2.2-2.3-3.4-5.4-3.4-8.6S9.8 5.7 12 3.4z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a7.7 7.7 0 0 1-8.5 7.7 8.8 8.8 0 0 1-2.6-.4L4 20.5l1.7-4.4a7.7 7.7 0 0 1-.7-3.2 7.7 7.7 0 0 1 7.7-7.4 7.7 7.7 0 0 1 7.8 6z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="2.5"/><path d="M3.5 10.2h17M8.2 3.5v4M15.8 3.5v4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.8 5 5 10-11"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="m8.2 12.4 2.6 2.6 5-5.6"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+</defs></svg>
+
 <!-- SEO: Crawlbar text för Google (dold visuellt men indexerbar) -->
 <div style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
   <h1>Dartkartan – Hitta dartbarer och dartklubbar i Sverige</h1>
@@ -1034,88 +1278,36 @@
     <span class="logo-text">DART<span>kartan</span></span>
   </a>
   <div class="header-right">
-    <button class="btn-add" onclick="openScorer()" style="background:var(--surface2);color:var(--accent);border:1px solid var(--accent);margin-right:0.5rem">🎯 <span data-i18n="scorer">Scorer</span></button>
-    <button class="btn-add" onclick="openModal()" data-i18n="addNew">+ Lägg till</button>
-    <button class="btn-add" id="langToggle" onclick="setLang(currentLang==='sv'?'en':'sv')" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:0.3rem 0.5rem;min-width:auto;line-height:1" title="Switch language"><svg id="langFlag" width="24" height="16" viewBox="0 0 60 40" style="display:block"><rect width="60" height="40" fill="#012169"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="10"/><path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="6"/></svg></button>
+    <button class="btn-add btn-ghost-accent" onclick="openScorer()"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><span data-i18n="scorer">Scorer</span></button>
+    <button class="btn-add" onclick="openModal()"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span data-i18n="addNew">Lägg till</span></button>
+    <button class="btn-add" id="langToggle" onclick="setLang(currentLang==='sv'?'en':'sv')" style="background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:0.3rem 0.5rem;min-width:auto;line-height:1" title="Switch language" aria-label="Switch language / Byt språk"><svg id="langFlag" width="24" height="16" viewBox="0 0 60 40" style="display:block"><rect width="60" height="40" fill="#012169"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="10"/><path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="6"/></svg></button>
   </div>
 </header>
 
 <div class="app">
   <aside class="sidebar">
-    <button class="mobile-close-sidebar" style="display:none" onclick="closeMobileSidebar()">✕</button>
+    <button class="mobile-close-sidebar" style="display:none" onclick="closeMobileSidebar()"><span data-i18n="closeLabel">Stäng</span><svg class="icon icon-lg" aria-hidden="true"><use href="#i-close"/></svg></button>
     <div class="sidebar-top">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span>
         <input class="search-input" id="searchInput" type="text" placeholder="Sök stad eller bar…" data-i18n-placeholder="searchPlaceholder" oninput="filterBars()" />
       </div>
-      <div class="filters">
-        <div class="filter-chip active" onclick="setFilter('alla', this)" data-i18n="filterAll">Alla</div>
-        <div class="filter-chip" onclick="setFilter('gratis', this)" data-i18n="filterFree">Gratis</div>
+      <div class="filters" role="group" aria-label="Filtrera">
+        <button type="button" class="filter-chip active" onclick="setFilter('alla', this)"><span data-i18n="filterAll">Alla</span></button>
+        <button type="button" class="filter-chip" onclick="setFilter('gratis', this)"><span data-i18n="filterFree">Gratis</span></button>
       </div>
-      <div class="filters" style="margin-top:6px">
-        <div class="filter-chip city-chip active" onclick="setCity('alla', this)" data-i18n="allCities">🇸🇪 Alla städer</div>
-        <div class="filter-chip city-chip" onclick="setCity('Göteborg', this)">Göteborg</div>
-        <div class="filter-chip city-chip" onclick="setCity('Malmö', this)">Malmö</div>
-        <div class="filter-chip city-chip" onclick="setCity('Stockholm', this)">Stockholm</div>
-        <div class="filter-chip city-chip" onclick="setCity('Uppsala', this)">Uppsala</div>
-        <div class="filter-chip city-chip" onclick="setCity('Halmstad', this)">Halmstad</div>
-        <div class="filter-chip city-chip" onclick="setCity('Helsingborg', this)">Helsingborg</div>
-        <div class="filter-chip city-chip" onclick="setCity('Borlänge', this)">Borlänge</div>
-        <div class="filter-chip city-chip" onclick="setCity('Alingsås', this)">Alingsås</div>
-        <div class="filter-chip city-chip" onclick="setCity('Lysekil', this)">Lysekil</div>
-        <div class="filter-chip city-chip" onclick="setCity('Västervik', this)">Västervik</div>
-        <div class="filter-chip city-chip" onclick="setCity('Tranås', this)">Tranås</div>
-        <div class="filter-chip city-chip" onclick="setCity('Torslanda', this)">Torslanda</div>
-        <div class="filter-chip city-chip" onclick="setCity('Trollhättan', this)">Trollhättan</div>
-        <div class="filter-chip city-chip" onclick="setCity('Norrköping', this)">Norrköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Uddevalla', this)">Uddevalla</div>
-        <div class="filter-chip city-chip" onclick="setCity('Örebro', this)">Örebro</div>
-        <div class="filter-chip city-chip" onclick="setCity('Umeå', this)">Umeå</div>
-        <div class="filter-chip city-chip" onclick="setCity('Östersund', this)">Östersund</div>
-        <div class="filter-chip city-chip" onclick="setCity('Södertälje', this)">Södertälje</div>
-        <div class="filter-chip city-chip" onclick="setCity('Sandviken', this)">Sandviken</div>
-        <div class="filter-chip city-chip" onclick="setCity('Eskilstuna', this)">Eskilstuna</div>
-        <div class="filter-chip city-chip" onclick="setCity('Karlskoga', this)">Karlskoga</div>
-        <div class="filter-chip city-chip" onclick="setCity('Karlstad', this)">Karlstad</div>
-        <div class="filter-chip city-chip" onclick="setCity('Kungsbacka', this)">Kungsbacka</div>
-        <div class="filter-chip city-chip" onclick="setCity('Borås', this)">Borås</div>
-        <div class="filter-chip city-chip" onclick="setCity('Bålsta', this)">Bålsta</div>
-        <div class="filter-chip city-chip" onclick="setCity('Falkenberg', this)">Falkenberg</div>
-        <div class="filter-chip city-chip" onclick="setCity('Falköping', this)">Falköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Falun', this)">Falun</div>
-        <div class="filter-chip city-chip" onclick="setCity('Eksjö', this)">Eksjö</div>
-        <div class="filter-chip city-chip" onclick="setCity('Ludvika', this)">Ludvika</div>
-        <div class="filter-chip city-chip" onclick="setCity('Haninge', this)">Haninge</div>
-        <div class="filter-chip city-chip" onclick="setCity('Skene', this)">Skene</div>
-        <div class="filter-chip city-chip" onclick="setCity('Solna', this)">Solna</div>
-        <div class="filter-chip city-chip" onclick="setCity('Ulricehamn', this)">Ulricehamn</div>
-        <div class="filter-chip city-chip" onclick="setCity('Lidköping', this)">Lidköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Enköping', this)">Enköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Mölndal', this)">Mölndal</div>
-        <div class="filter-chip city-chip" onclick="setCity('Västerås', this)">Västerås</div>
-        <div class="filter-chip city-chip" onclick="setCity('Jönköping', this)">Jönköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Linköping', this)">Linköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Lund', this)">Lund</div>
-        <div class="filter-chip city-chip" onclick="setCity('Gävle', this)">Gävle</div>
-        <div class="filter-chip city-chip" onclick="setCity('Växjö', this)">Växjö</div>
-        <div class="filter-chip city-chip" onclick="setCity('Kristianstad', this)">Kristianstad</div>
-        <div class="filter-chip city-chip" onclick="setCity('Kalmar', this)">Kalmar</div>
-        <div class="filter-chip city-chip" onclick="setCity('Sundsvall', this)">Sundsvall</div>
-        <div class="filter-chip city-chip" onclick="setCity('Karlskrona', this)">Karlskrona</div>
-        <div class="filter-chip city-chip" onclick="setCity('Nyköping', this)">Nyköping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Ystad', this)">Ystad</div>
-        <div class="filter-chip city-chip" onclick="setCity('Köping', this)">Köping</div>
-        <div class="filter-chip city-chip" onclick="setCity('Piteå', this)">Piteå</div>
-        <div class="filter-chip city-chip" onclick="setCity('Katrineholm', this)">Katrineholm</div>
-        <div class="filter-chip city-chip" onclick="setCity('Ekerö', this)">Ekerö</div>
-        <div class="filter-chip city-chip" onclick="setCity('Vänersborg', this)">Vänersborg</div>
-        <div class="filter-chip city-chip" onclick="setCity('Sundbyberg', this)">Sundbyberg</div>
-        <div class="filter-chip city-chip" onclick="setCity('Täby', this)">Täby</div>
+      <div class="city-filter">
+        <div class="city-row" id="cityRow" role="group" aria-label="Populara stader"></div>
+        <div class="city-select-wrap">
+          <label class="sr-only" for="citySelect">Valj stad</label>
+          <select id="citySelect" onchange="setCity(this.value)"></select>
+          <svg class="icon city-select-chevron" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+        </div>
       </div>
     </div>
     <div class="list-toggle">
-      <button class="list-toggle-btn active" id="toggleBarer" onclick="showListView('barer')">🎯 <span data-i18n="bars">Barer</span></button>
-      <button class="list-toggle-btn" id="toggleKlubbar" onclick="showListView('klubbar')">🏆 <span data-i18n="clubs">Klubbar</span></button>
+      <button class="list-toggle-btn active" id="toggleBarer" onclick="showListView('barer')" aria-pressed="true"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><span data-i18n="bars">Barer</span></button>
+      <button class="list-toggle-btn" id="toggleKlubbar" onclick="showListView('klubbar')" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-trophy"/></svg><span data-i18n="clubs">Klubbar</span></button>
     </div>
     <div class="results-label" id="resultsLabel"></div>
     <div class="bar-list" id="barList"></div>
@@ -1140,51 +1332,51 @@
       </div>
     </div>
     <div id="map"></div>
-    <button class="btn-locate" onclick="locateUser()" data-i18n-title="locateMe" title="Hitta mig"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0d0d0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></button>
-    <button class="btn-theme" onclick="toggleMapTheme()" id="themeToggle" data-i18n-title="toggleTheme" title="Byt kartläge">☀️</button>
+    <button class="btn-locate" onclick="locateUser()" data-i18n-title="locateMe" title="Hitta mig" aria-label="Hitta mig på kartan"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-nav"/></svg></button>
+    <button class="btn-theme" onclick="toggleTheme()" id="themeToggle" data-i18n-title="toggleTheme" title="Byt tema" aria-label="Byt mellan ljust och mörkt tema"><svg class="icon icon-lg" aria-hidden="true"><use id="themeIconUse" href="#i-sun"/></svg></button>
   </div>
 </div>
-<button class="mobile-bar-toggle" style="display:none" id="mobileBarToggle" onclick="openMobileSidebar()">🎯 VISA BARER & KLUBBAR</button>
+<button class="mobile-bar-toggle" style="display:none" id="mobileBarToggle" onclick="openMobileSidebar()"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><span id="mobileBarToggleText">VISA BARER &amp; KLUBBAR</span></button>
 
 <!-- ADD BAR MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <button class="btn-close" onclick="closeModal()">✕</button>
+    <button class="btn-close" onclick="closeModal()" aria-label="Stäng"><svg class="icon icon-lg" aria-hidden="true"><use href="#i-close"/></svg></button>
     <div class="form-tabs">
-      <div class="form-tab active" id="formTabBar" onclick="switchFormTab('bar')">🎯 <span data-i18n="addBar">Lägg till bar</span></div>
-      <div class="form-tab" id="formTabClub" onclick="switchFormTab('club')">🏆 <span data-i18n="addClub">Lägg till klubb</span></div>
+      <button type="button" class="form-tab active" id="formTabBar" onclick="switchFormTab('bar')" role="tab" aria-selected="true"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><span data-i18n="addBar">Lägg till bar</span></button>
+      <button type="button" class="form-tab" id="formTabClub" onclick="switchFormTab('club')" role="tab" aria-selected="false"><svg class="icon" aria-hidden="true"><use href="#i-trophy"/></svg><span data-i18n="addClub">Lägg till klubb</span></button>
     </div>
     <form id="barForm" name="ny-bar" method="POST" onsubmit="return submitBar(event)">
       <div class="form-group">
-        <label data-i18n="barName">Barens namn</label>
-        <input type="text" name="namn" id="formName" placeholder="Dartkartan" required />
+        <label data-i18n="barName" for="formName">Barens namn</label>
+        <input type="text" name="namn"  id="formName" placeholder="Dartkartan" required />
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label data-i18n="city">Stad</label>
-          <input type="text" name="stad" id="formCity" placeholder="Göteborg" required />
+          <label data-i18n="city" for="formCity">Stad</label>
+          <input type="text" name="stad"  id="formCity" placeholder="Göteborg" required />
         </div>
         <div class="form-group">
-          <label data-i18n="numBoards">Antal tavlor</label>
-          <input type="number" name="tavlor" id="formBoards" placeholder="2" min="1" required />
+          <label data-i18n="numBoards" for="formBoards">Antal tavlor</label>
+          <input type="number" name="tavlor"  id="formBoards" placeholder="2" min="1" required />
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label data-i18n="priceLabel">Pris</label>
-          <input type="text" name="pris" id="formPrice" placeholder="Gratis / 20 kr" />
+          <label data-i18n="priceLabel" for="formPrice">Pris</label>
+          <input type="text" name="pris"  id="formPrice" placeholder="Gratis / 20 kr" />
         </div>
         <div class="form-group">
-          <label data-i18n="priceType">Pristyp</label>
-          <select name="pristyp" id="formPriceType">
+          <label data-i18n="priceType" for="formPriceType">Pristyp</label>
+          <select name="pristyp"  id="formPriceType">
             <option value="bana" data-i18n="perLaneOption">Per bana</option>
             <option value="person" data-i18n="perPersonOption">Per person</option>
             <option value="gratis" data-i18n="freeOption">Gratis</option>
           </select>
         </div>
         <div class="form-group">
-          <label data-i18n="boardType">Taveltyp</label>
-          <select name="tavletyp" id="formType">
+          <label data-i18n="boardType" for="formType">Taveltyp</label>
+          <select name="tavletyp"  id="formType">
             <option value="Bristol">Bristol</option>
             <option value="Bristol Autoscoring">Bristol Autoscoring</option>
             <option value="Elektronisk">Elektronisk</option>
@@ -1192,55 +1384,55 @@
         </div>
       </div>
       <div class="form-group">
-        <label data-i18n="address">Adress</label>
-        <input type="text" name="adress" id="formAddress" placeholder="Storgatan 1" required />
+        <label data-i18n="address" for="formAddress">Adress</label>
+        <input type="text" name="adress"  id="formAddress" placeholder="Storgatan 1" required />
       </div>
       <div class="form-group">
-        <label data-i18n="hoursFreetext">Öppettider (fritext)</label>
-        <input type="text" name="oppettider" id="formHours" placeholder="Mån–Fre 16–02, Lör–Sön 14–03" />
+        <label data-i18n="hoursFreetext" for="formHours">Öppettider (fritext)</label>
+        <input type="text" name="oppettider"  id="formHours" placeholder="Mån–Fre 16–02, Lör–Sön 14–03" />
       </div>
       <div class="form-group">
-        <label data-i18n="beerPrice">Ölpris (40–50 cl)</label>
-        <input type="text" name="olpris" id="formBeerPrice" placeholder="89 kr" />
+        <label data-i18n="beerPrice" for="formBeerPrice">Ölpris (40–50 cl)</label>
+        <input type="text" name="olpris"  id="formBeerPrice" placeholder="89 kr" />
       </div>
-      <button type="submit" class="btn-submit" data-i18n="submit">Skicka in 🎯</button>
+      <button type="submit" class="btn-submit"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><span data-i18n="submit">Skicka in</span></button>
     </form>
     <form id="clubForm" name="ny-klubb" method="POST" onsubmit="return submitClub(event)" style="display:none">
       <div class="form-group">
-        <label data-i18n="clubName">Klubbens namn</label>
-        <input type="text" name="klubbnamn" id="formClubName" placeholder="Dartkartan Dart Club" required />
+        <label data-i18n="clubName" for="formClubName">Klubbens namn</label>
+        <input type="text" name="klubbnamn"  id="formClubName" placeholder="Dartkartan Dart Club" required />
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label data-i18n="city">Stad</label>
-          <input type="text" name="stad" id="formClubCity" placeholder="Göteborg" required />
+          <label data-i18n="city" for="formClubCity">Stad</label>
+          <input type="text" name="stad"  id="formClubCity" placeholder="Göteborg" required />
         </div>
         <div class="form-group">
-          <label data-i18n="playsAtLabel">Spelar på</label>
-          <select name="spelar_pa" id="formClubBar" onchange="toggleClubBarOther(this)" required>
+          <label data-i18n="playsAtLabel" for="formClubBar">Spelar på</label>
+          <select name="spelar_pa"  id="formClubBar" onchange="toggleClubBarOther(this)" required>
             <option value="" data-i18n="selectBar">— Välj bar —</option>
             <option value="__other" data-i18n="otherVenue">Annan lokal (ej listad)</option>
           </select>
-          <input type="text" name="spelar_pa_annat" id="formClubBarOther" data-i18n-placeholder="address" placeholder="Adress" style="display:none;margin-top:6px" />
-          <input type="number" name="antal_tavlor" id="formClubBoards" data-i18n-placeholder="numBoards" placeholder="Antal tavlor" min="0" style="display:none;margin-top:6px" />
+          <input type="text" name="spelar_pa_annat" id="formClubBarOther" data-i18n-placeholder="address" placeholder="Adress" aria-label="Adress" style="display:none;margin-top:6px" />
+          <input type="number" name="antal_tavlor" id="formClubBoards" data-i18n-placeholder="numBoards" placeholder="Antal tavlor" aria-label="Antal tavlor" min="0" style="display:none;margin-top:6px" />
         </div>
       </div>
       <div class="form-group">
         <label data-i18n="playDays">Speldagar & tider</label>
         <div class="club-days-grid" id="clubDaysGrid">
-          <div class="club-day-row"><input type="checkbox" name="dag_man" value="Måndag" id="cb_man"><label for="cb_man" data-i18n="monday">Måndag</label><input type="text" name="tid_man" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
-          <div class="club-day-row"><input type="checkbox" name="dag_tis" value="Tisdag" id="cb_tis"><label for="cb_tis" data-i18n="tuesday">Tisdag</label><input type="text" name="tid_tis" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
-          <div class="club-day-row"><input type="checkbox" name="dag_ons" value="Onsdag" id="cb_ons"><label for="cb_ons" data-i18n="wednesday">Onsdag</label><input type="text" name="tid_ons" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
-          <div class="club-day-row"><input type="checkbox" name="dag_tor" value="Torsdag" id="cb_tor"><label for="cb_tor" data-i18n="thursday">Torsdag</label><input type="text" name="tid_tor" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
-          <div class="club-day-row"><input type="checkbox" name="dag_fre" value="Fredag" id="cb_fre"><label for="cb_fre" data-i18n="friday">Fredag</label><input type="text" name="tid_fre" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
-          <div class="club-day-row"><input type="checkbox" name="dag_lor" value="Lördag" id="cb_lor"><label for="cb_lor" data-i18n="saturday">Lördag</label><input type="text" name="tid_lor" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
-          <div class="club-day-row"><input type="checkbox" name="dag_son" value="Söndag" id="cb_son"><label for="cb_son" data-i18n="sunday">Söndag</label><input type="text" name="tid_son" placeholder="18:00–21:00" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_man" value="Måndag" id="cb_man"><label for="cb_man" data-i18n="monday">Måndag</label><input type="text" name="tid_man" placeholder="18:00–21:00" aria-label="Speltid måndag" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_tis" value="Tisdag" id="cb_tis"><label for="cb_tis" data-i18n="tuesday">Tisdag</label><input type="text" name="tid_tis" placeholder="18:00–21:00" aria-label="Speltid tisdag" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_ons" value="Onsdag" id="cb_ons"><label for="cb_ons" data-i18n="wednesday">Onsdag</label><input type="text" name="tid_ons" placeholder="18:00–21:00" aria-label="Speltid onsdag" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_tor" value="Torsdag" id="cb_tor"><label for="cb_tor" data-i18n="thursday">Torsdag</label><input type="text" name="tid_tor" placeholder="18:00–21:00" aria-label="Speltid torsdag" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_fre" value="Fredag" id="cb_fre"><label for="cb_fre" data-i18n="friday">Fredag</label><input type="text" name="tid_fre" placeholder="18:00–21:00" aria-label="Speltid fredag" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_lor" value="Lördag" id="cb_lor"><label for="cb_lor" data-i18n="saturday">Lördag</label><input type="text" name="tid_lor" placeholder="18:00–21:00" aria-label="Speltid lördag" class="club-day-time" disabled /></div>
+          <div class="club-day-row"><input type="checkbox" name="dag_son" value="Söndag" id="cb_son"><label for="cb_son" data-i18n="sunday">Söndag</label><input type="text" name="tid_son" placeholder="18:00–21:00" aria-label="Speltid söndag" class="club-day-time" disabled /></div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label data-i18n="priceModel">Prismodell</label>
-          <select name="prismodell" id="formClubPriceType" required onchange="toggleClubPriceInput(this)">
+          <label data-i18n="priceModel" for="formClubPriceType">Prismodell</label>
+          <select name="prismodell"  id="formClubPriceType" required onchange="toggleClubPriceInput(this)">
             <option value="" data-i18n="selectOption">— Välj —</option>
             <option value="Gratis" data-i18n="free">Gratis</option>
             <option value="Pris per gång" data-i18n="pricePerTime">Pris per gång</option>
@@ -1248,23 +1440,23 @@
           </select>
         </div>
         <div class="form-group" id="formClubPriceGroup" style="display:none">
-          <label data-i18n="amount">Belopp</label>
-          <input type="text" name="pris" id="formClubPrice" placeholder="kr/år" />
+          <label data-i18n="amount" for="formClubPrice">Belopp</label>
+          <input type="text" name="pris"  id="formClubPrice" placeholder="kr/år" />
         </div>
       </div>
       <div class="form-group">
-        <label data-i18n="socialMedia">Sociala medier</label>
-        <input type="text" name="sociala_medier" id="formClubSocial" placeholder="ex facebook.com/dartkartan" />
+        <label data-i18n="socialMedia" for="formClubSocial">Sociala medier</label>
+        <input type="text" name="sociala_medier"  id="formClubSocial" placeholder="ex facebook.com/dartkartan" />
       </div>
       <div class="form-group">
-        <label data-i18n="website">Hemsida</label>
-        <input type="text" name="hemsida" id="formClubWeb" placeholder="ex dartkartan.se" />
+        <label data-i18n="website" for="formClubWeb">Hemsida</label>
+        <input type="text" name="hemsida"  id="formClubWeb" placeholder="ex dartkartan.se" />
       </div>
       <div class="form-group">
-        <label data-i18n="phone">Telefon</label>
-        <input type="text" name="telefon" id="formClubPhone" placeholder="ex 070- T20 T20 Bull" />
+        <label data-i18n="phone" for="formClubPhone">Telefon</label>
+        <input type="text" name="telefon"  id="formClubPhone" placeholder="ex 070- T20 T20 Bull" />
       </div>
-      <button type="submit" class="btn-submit" data-i18n="submit">Skicka in 🏆</button>
+      <button type="submit" class="btn-submit"><svg class="icon" aria-hidden="true"><use href="#i-trophy"/></svg><span data-i18n="submit">Skicka in</span></button>
     </form>
   </div>
 </div>
@@ -1290,14 +1482,14 @@
         <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:start">
           <!-- Team 1 -->
           <div style="text-align:center">
-            <div id="team1Name" onclick="renameTeam(1)" style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:0.04em;margin-bottom:0.7rem;cursor:pointer;background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.25);border-radius:6px;padding:8px 12px;transition:all 0.15s" onmouseover="this.style.background='rgba(232,255,71,0.15)'" onmouseout="this.style.background='rgba(232,255,71,0.08)'" title="Klicka för att byta namn">Team 1</div>
+            <button type="button" id="team1Name" onclick="renameTeam(1)" aria-label="Byt namn pa lag 1" style="display:block;width:100%;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent-text);letter-spacing:0.04em;margin-bottom:0.7rem;cursor:pointer;background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.25);border-radius:6px;padding:8px 12px;transition:all 0.15s" onmouseover="this.style.background='rgba(232,255,71,0.15)'" onmouseout="this.style.background='rgba(232,255,71,0.08)'" title="Klicka för att byta namn">Team 1</button>
             <div id="team1Avatars" style="display:flex;align-items:flex-start;justify-content:center;gap:0.6rem;flex-wrap:wrap"></div>
           </div>
           <!-- Divider -->
           <div style="width:1px;background:var(--border);min-height:80px;margin:1.5rem 1rem 0"></div>
           <!-- Team 2 -->
           <div style="text-align:center">
-            <div id="team2Name" onclick="renameTeam(2)" style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent2);letter-spacing:0.04em;margin-bottom:0.7rem;cursor:pointer;background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.25);border-radius:6px;padding:8px 12px;transition:all 0.15s" onmouseover="this.style.background='rgba(255,71,87,0.15)'" onmouseout="this.style.background='rgba(255,71,87,0.08)'" title="Klicka för att byta namn">Team 2</div>
+            <button type="button" id="team2Name" onclick="renameTeam(2)" aria-label="Byt namn pa lag 2" style="display:block;width:100%;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent2);letter-spacing:0.04em;margin-bottom:0.7rem;cursor:pointer;background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.25);border-radius:6px;padding:8px 12px;transition:all 0.15s" onmouseover="this.style.background='rgba(255,71,87,0.15)'" onmouseout="this.style.background='rgba(255,71,87,0.08)'" title="Klicka för att byta namn">Team 2</button>
             <div id="team2Avatars" style="display:flex;align-items:flex-start;justify-content:center;gap:0.6rem;flex-wrap:wrap"></div>
           </div>
         </div>
@@ -1492,7 +1684,7 @@
       <div style="margin-top:1.2rem;border-top:1px solid var(--border);padding-top:0.8rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
           <span style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Kasthistorik</span>
-          <span id="historyToggle" onclick="toggleHistory()" style="font-size:0.72rem;color:var(--accent);cursor:pointer">Visa</span>
+          <button type="button" id="historyToggle" onclick="toggleHistory()" style="font-size:0.72rem;color:var(--accent-text);cursor:pointer;background:none;border:none;padding:2px 4px">Visa</button>
         </div>
         <div id="throwHistory" style="display:none;max-height:200px;overflow-y:auto"></div>
       </div>
@@ -1512,19 +1704,19 @@
 <div id="editModal" class="edit-modal" style="display:none">
   <div class="edit-modal-box">
     <button class="edit-modal-close" onclick="closeEditModal()">&times;</button>
-    <h3 data-i18n="suggestChange">Föreslå ändring</h3>
+    <h3 id="editModalTitle" data-i18n="suggestChange">Föreslå ändring</h3>
     <p style="color:var(--muted);font-size:0.8rem;margin:4px 0 0">för <strong id="editBarName"></strong></p>
     <input type="hidden" id="editBarId">
-    <label data-i18n="editBoardsLabel">Antal tavlor</label>
-    <input id="editBoards" type="number" min="1" placeholder="t.ex. 4">
-    <label data-i18n="priceLabel">Pris</label>
-    <input id="editPrice" type="text" placeholder="t.ex. 100 kr/h">
-    <label data-i18n="beerLabel">Ölpris (40–50cl)</label>
-    <input id="editBeer" type="text" placeholder="t.ex. 69 kr">
-    <label data-i18n="editHoursLabel">Öppettider</label>
-    <textarea id="editHours" placeholder="t.ex. Mån–Fre 16–01, Lör 12–01"></textarea>
-    <label data-i18n="comment">Övrig kommentar</label>
-    <textarea id="editComment" data-i18n-placeholder="commentPlaceholder" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
+    <label data-i18n="editBoardsLabel" for="editBoards">Antal tavlor</label>
+    <input  id="editBoards" type="number" min="1" placeholder="t.ex. 4">
+    <label data-i18n="priceLabel" for="editPrice">Pris</label>
+    <input  id="editPrice" type="text" placeholder="t.ex. 100 kr/h">
+    <label data-i18n="beerLabel" for="editBeer">Ölpris (40–50cl)</label>
+    <input  id="editBeer" type="text" placeholder="t.ex. 69 kr">
+    <label data-i18n="editHoursLabel" for="editHours">Öppettider</label>
+    <textarea  id="editHours" placeholder="t.ex. Mån–Fre 16–01, Lör 12–01"></textarea>
+    <label data-i18n="comment" for="editComment">Övrig kommentar</label>
+    <textarea  id="editComment" data-i18n-placeholder="commentPlaceholder" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
     <button class="edit-modal-submit" onclick="submitEdit()" data-i18n="sendSuggestion">Skicka förslag</button>
   </div>
 </div>
@@ -1533,19 +1725,19 @@
 <div id="editClubModal" class="edit-modal" style="display:none">
   <div class="edit-modal-box">
     <button class="edit-modal-close" onclick="closeEditClubModal()">&times;</button>
-    <h3 data-i18n="suggestChange">Föreslå ändring</h3>
+    <h3 id="editClubModalTitle" data-i18n="suggestChange">Föreslå ändring</h3>
     <p style="color:var(--muted);font-size:0.8rem;margin:4px 0 0">för <strong id="editClubName"></strong></p>
     <input type="hidden" id="editClubId">
-    <label data-i18n="day">Dag</label>
-    <input id="editClubDay" type="text" placeholder="t.ex. Tisdagar">
-    <label data-i18n="time">Tid</label>
-    <input id="editClubTime" type="text" placeholder="t.ex. 18:00–21:00">
-    <label data-i18n="priceLabel">Pris</label>
-    <input id="editClubPrice" type="text" placeholder="t.ex. 50 kr/pers">
-    <label data-i18n="contact">Kontakt</label>
-    <input id="editClubContact" type="text" placeholder="Facebook/hemsida/telefon">
-    <label data-i18n="comment">Övrig kommentar</label>
-    <textarea id="editClubComment" data-i18n-placeholder="commentPlaceholder" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
+    <label data-i18n="day" for="editClubDay">Dag</label>
+    <input  id="editClubDay" type="text" placeholder="t.ex. Tisdagar">
+    <label data-i18n="time" for="editClubTime">Tid</label>
+    <input  id="editClubTime" type="text" placeholder="t.ex. 18:00–21:00">
+    <label data-i18n="priceLabel" for="editClubPrice">Pris</label>
+    <input  id="editClubPrice" type="text" placeholder="t.ex. 50 kr/pers">
+    <label data-i18n="contact" for="editClubContact">Kontakt</label>
+    <input  id="editClubContact" type="text" placeholder="Facebook/hemsida/telefon">
+    <label data-i18n="comment" for="editClubComment">Övrig kommentar</label>
+    <textarea  id="editClubComment" data-i18n-placeholder="commentPlaceholder" placeholder="Valfritt – beskriv vad som ändrats"></textarea>
     <button class="edit-modal-submit" onclick="submitEditClub()" data-i18n="sendSuggestion">Skicka förslag</button>
   </div>
 </div>
@@ -1560,28 +1752,30 @@ const i18n = {
   sv: {
     // Header
     scorer: 'Scorer',
-    addNew: '+ Lägg till',
+    addNew: 'Lägg till',
     // Search & filters
     searchPlaceholder: 'Sök stad eller bar…',
     filterAll: 'Alla',
     filterFree: 'Gratis',
-    allCities: '🇸🇪 Alla städer',
+    allCities: 'Alla städer',
+    moreCities: 'Fler städer…',
+    closeLabel: 'Stäng',
     // Sidebar
     bars: 'Barer',
     clubs: 'Klubbar',
     cities: 'Städer',
     showingBars: (n, total) => `Visar ${n} av ${total} barer`,
     showingClubs: (n, total) => `Visar ${n} av ${total} klubbar`,
-    noMatchBars: 'Inga barer matchar sökningen 🎯',
-    noMatchClubs: 'Inga klubbar matchar sökningen 🏆',
-    mobileToggle: '🎯 VISA BARER & KLUBBAR',
+    noMatchBars: 'Inga barer matchar sökningen',
+    noMatchClubs: 'Inga klubbar matchar sökningen',
+    mobileToggle: 'VISA BARER & KLUBBAR',
     boards: 'tavlor',
     openNow: 'Öppet nu',
     openLabel: 'Öppet',
     closed: 'Stängt',
     // Map buttons
     locateMe: 'Hitta mig',
-    toggleTheme: 'Byt kartläge',
+    toggleTheme: 'Byt tema',
     // Popup
     status: 'Status',
     boardsLabel: 'Tavlor',
@@ -1684,19 +1878,21 @@ const i18n = {
   },
   en: {
     scorer: 'Scorer',
-    addNew: '+ Add',
+    addNew: 'Add place',
     searchPlaceholder: 'Search city or bar…',
     filterAll: 'All',
     filterFree: 'Free',
-    allCities: '🇸🇪 All cities',
+    allCities: 'All cities',
+    moreCities: 'More cities…',
+    closeLabel: 'Close',
     bars: 'Bars',
     clubs: 'Clubs',
     cities: 'Cities',
     showingBars: (n, total) => `Showing ${n} of ${total} bars`,
     showingClubs: (n, total) => `Showing ${n} of ${total} clubs`,
-    noMatchBars: 'No bars match your search 🎯',
-    noMatchClubs: 'No clubs match your search 🏆',
-    mobileToggle: '🎯 SHOW BARS & CLUBS',
+    noMatchBars: 'No bars match your search',
+    noMatchClubs: 'No clubs match your search',
+    mobileToggle: 'SHOW BARS & CLUBS',
     boards: 'boards',
     openNow: 'Open now',
     openLabel: 'Open',
@@ -1800,6 +1996,9 @@ const i18n = {
 
 function t(key) { return i18n[currentLang][key] || i18n.sv[key] || key; }
 
+// Ikon-hjalpare: ic('pin') -> inline <svg> som pekar pa spriten
+function ic(name, cls) { return '<svg class="icon ' + (cls || '') + '" aria-hidden="true" focusable="false"><use href="#i-' + name + '"/></svg>'; }
+
 function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('lang', lang);
@@ -1828,7 +2027,9 @@ function setLang(lang) {
   });
   // Update mobile toggle
   const mob = document.getElementById('mobileBarToggle');
-  if (mob) mob.textContent = t('mobileToggle');
+  const mobTxt = document.getElementById('mobileBarToggleText');
+  if (mobTxt) mobTxt.textContent = t('mobileToggle');
+  if (typeof renderCityFilter === 'function') renderCityFilter();
   // Update lang button (SVG flags)
   const flag = document.getElementById('langFlag');
   if (flag) {
@@ -3062,14 +3263,22 @@ let isDarkMap = true;
 // ──────────────────────────────────────────
 function initMap() {
   map = L.map('map', { zoomControl: false }).setView([56.9, 12.8], 7);
-  darkTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© <a href="https://carto.com/">CARTO</a> © <a href="https://osm.org/">OSM</a>',
-    subdomains: 'abcd', maxZoom: 20
-  }).addTo(map);
-  lightTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© <a href="https://carto.com/">CARTO</a> © <a href="https://osm.org/">OSM</a>',
-    subdomains: 'abcd', maxZoom: 20
-  });
+  // Esri Gray Canvas (nyckelfri). CARTO:s basemaps kräver API-nyckel sedan 2026.
+  const esriCanvas = (tone) => {
+    const base = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_' + tone + '_Gray_';
+    const cls = tone === 'Dark' ? 'canvas-dark' : '';
+    return L.layerGroup([
+      L.tileLayer(base + 'Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles © <a href="https://www.esri.com/">Esri</a> © <a href="https://osm.org/">OSM</a>',
+        maxZoom: 20, maxNativeZoom: 16, className: cls
+      }),
+      L.tileLayer(base + 'Reference/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 20, maxNativeZoom: 16, className: cls && cls + '-ref'
+      })
+    ]);
+  };
+  darkTile = esriCanvas('Dark').addTo(map);
+  lightTile = esriCanvas('Light');
   L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
   barOnlyLayer = L.layerGroup().addTo(map);
@@ -3080,13 +3289,13 @@ function initMap() {
     const hasClub = clubs.some(c => c.barId === bar.id);
     const icon = L.divIcon({
       className: '',
-      html: `<div class="dart-marker${hasClub ? ' dual' : ''}" title="${bar.name}">🎯</div>`,
+      html: `<div class="dart-marker${hasClub ? ' dual' : ''}" title="${bar.name}"><svg class="marker-icon" aria-hidden="true"><use href="#i-target"/></svg></div>`,
       iconSize: [36, 36],
       iconAnchor: [18, 18],
       popupAnchor: [0, -20],
     });
     const marker = L.marker([bar.lat, bar.lng], { icon });
-    marker.bindPopup(buildPopup(bar));
+    marker.bindPopup(buildPopup(bar), { autoPanPaddingTopLeft: L.point(24, 104), autoPanPaddingBottomRight: L.point(24, 48), maxWidth: 320 });
     marker.on('click', () => selectBar(bar.id));
     markers[bar.id] = marker;
     if (hasClub) { dualIds.push(bar.id); dualLayer.addLayer(marker); }
@@ -3097,13 +3306,13 @@ function initMap() {
   clubs.filter(c => c.barId === null).forEach(club => {
     const icon = L.divIcon({
       className: '',
-      html: `<div class="club-marker" title="${club.name}">🏆</div>`,
+      html: `<div class="club-marker" title="${club.name}"><svg class="marker-icon" aria-hidden="true"><use href="#i-trophy"/></svg></div>`,
       iconSize: [36, 36],
       iconAnchor: [18, 18],
       popupAnchor: [0, -20],
     });
     const marker = L.marker([club.lat, club.lng], { icon });
-    marker.bindPopup(buildClubPopup(club));
+    marker.bindPopup(buildClubPopup(club), { autoPanPaddingTopLeft: L.point(24, 104), autoPanPaddingBottomRight: L.point(24, 48), maxWidth: 320 });
     const cid = 'club-' + club.id;
     markers[cid] = marker;
     clubOnlyIds.push(cid);
@@ -3211,11 +3420,11 @@ function buildPopup(bar) {
   const openHtml = isOpen
     ? `<span class="popup-val green">${t('openNow')}</span>`
     : `<span class="popup-val" style="color:#ff4757">${t('closed')}</span>`;
-  const verifiedBadge = bar.verified ? `<span style="color:var(--accent);font-size:0.72rem">✓ ${t('verified')}</span>` : '';
+  const verifiedBadge = bar.verified ? `<span style="color:var(--accent);font-size:0.72rem">${ic('check')} ${t('verified')}</span>` : '';
   return `
     <div class="popup-inner">
       <div class="popup-name">${bar.name} ${verifiedBadge}</div>
-      <div class="popup-city">📍 ${bar.address}, ${bar.city}</div>
+      <div class="popup-city">${ic('pin')} ${bar.address}, ${bar.city}</div>
       <div class="popup-row"><span class="popup-label">${t('status')}</span>${openHtml}</div>
       <div class="popup-row"><span class="popup-label">${t('boardsLabel')}</span><span class="popup-val">${bar.boards} st (${bar.type})</span></div>
       <div class="popup-row"><span class="popup-label">${t('price')}</span><span class="popup-val yellow">${bar.price}${bar.priceType ? ` (${bar.priceType === 'bana' ? t('perLane') : t('perPerson')})` : ''}</span></div>
@@ -3225,22 +3434,22 @@ function buildPopup(bar) {
       <a href="https://www.google.com/maps/dir/?api=1&destination=${bar.lat},${bar.lng}" target="_blank" rel="noopener"
         style="display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:6px 12px;background:rgba(232,255,71,0.12);border:1px solid rgba(232,255,71,0.3);border-radius:6px;color:var(--accent);font-size:0.78rem;font-weight:600;text-decoration:none;transition:background 0.2s"
         onmouseover="this.style.background='rgba(232,255,71,0.2)'" onmouseout="this.style.background='rgba(232,255,71,0.12)'">
-        📍 ${t('directions')}
+        ${ic('route')} ${t('directions')}
       </a>
-      <button class="btn-edit-popup" onclick="openEditModal(${bar.id})">✏️ ${t('suggestEdit')}</button>
+      <button class="btn-edit-popup" onclick="openEditModal(${bar.id})">${ic('edit')} ${t('suggestEdit')}</button>
       ${(() => {
         const barClubs = clubs.filter(c => c.barId === bar.id);
         if (barClubs.length === 0) return '';
         return `<div class="club-section">
-          <div class="club-section-title">🏆 ${t('clubsPlayHere')}</div>
+          <div class="club-section-title">${ic('trophy')} ${t('clubsPlayHere')}</div>
           ${barClubs.map(c => `<div class="club-entry">
             <strong>${c.name}</strong><br>
-            ${c.boards ? `<span>🎯 ${c.boards} ${t('boards')}</span><br>` : ''}<span>📅 ${c.day} ${c.time}</span>${c.price ? ` · <span>💰 ${c.price}</span>` : ''}
+            ${c.boards ? `<span>${ic('target')} ${c.boards} ${t('boards')}</span><br>` : ''}<span>${ic('calendar')} ${c.day} ${c.time}</span>${c.price ? ` · <span>${ic('coin')} ${c.price}</span>` : ''}
             ${c.note ? `<br><span style="font-style:italic">${c.note}</span>` : ''}
-            ${c.social ? `<br><a href="${c.social.startsWith('http') ? c.social : 'https://' + c.social}" target="_blank" style="color:#4ade80;font-size:0.75rem;text-decoration:none">📱 ${c.social}</a>` : ''}
-            ${c.web ? `<br><a href="${c.web.startsWith('http') ? c.web : 'https://' + c.web}" target="_blank" style="color:var(--accent);font-size:0.75rem;text-decoration:none">🌐 ${c.web}</a>` : ''}
-            ${c.phone ? `<br><span style="color:var(--muted);font-size:0.75rem">📞 ${c.phone}</span>` : ''}
-            <br><button class="btn-edit-popup" onclick="openEditClubModal(${c.id})" style="margin-top:4px">✏️ ${t('suggestEdit')}</button>
+            ${c.social ? `<br><a href="${c.social.startsWith('http') ? c.social : 'https://' + c.social}" target="_blank" style="color:#4ade80;font-size:0.75rem;text-decoration:none">${ic('chat')} ${c.social}</a>` : ''}
+            ${c.web ? `<br><a href="${c.web.startsWith('http') ? c.web : 'https://' + c.web}" target="_blank" style="color:var(--accent);font-size:0.75rem;text-decoration:none">${ic('globe')} ${c.web}</a>` : ''}
+            ${c.phone ? `<br><span style="color:var(--muted);font-size:0.75rem">${ic('phone')} ${c.phone}</span>` : ''}
+            <br><button class="btn-edit-popup" onclick="openEditClubModal(${c.id})" style="margin-top:4px">${ic('edit')} ${t('suggestEdit')}</button>
           </div>`).join('')}
         </div>`;
       })()}
@@ -3253,8 +3462,8 @@ function buildClubPopup(club) {
   const linkedBar = club.barId ? bars.find(b => b.id === club.barId) : null;
   return `
     <div class="popup-inner">
-      <div class="popup-name" style="color:#4ade80">🏆 ${club.name}</div>
-      <div class="popup-city">📍 ${club.city}</div>
+      <div class="popup-name" style="color:var(--success-text)">${ic('trophy')} ${club.name}</div>
+      <div class="popup-city">${ic('pin')} ${club.city}</div>
       ${linkedBar ? `<div class="popup-row"><span class="popup-label">${t('playsAt')}</span><span class="popup-val">${linkedBar.name}</span></div>` : ''}
       ${club.boards ? `<div class="popup-row"><span class="popup-label">${t('boardsLabel')}</span><span class="popup-val">${club.boards} st</span></div>` : ''}
       <div class="popup-row"><span class="popup-label">${t('day')}</span><span class="popup-val">${club.day}</span></div>
@@ -3262,11 +3471,11 @@ function buildClubPopup(club) {
       ${club.price ? `<div class="popup-row"><span class="popup-label">${t('price')}</span><span class="popup-val yellow">${club.price}</span></div>` : ''}
       ${club.note ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--muted);font-style:italic">${club.note}</div>` : ''}
       ${(club.social || club.web || club.phone) ? `<div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:0.78rem">
-        ${club.social ? `<a href="${club.social.startsWith('http') ? club.social : 'https://' + club.social}" target="_blank" style="color:#4ade80;text-decoration:none">📱 ${club.social}</a>` : ''}
-        ${club.web ? `<a href="${club.web.startsWith('http') ? club.web : 'https://' + club.web}" target="_blank" style="color:var(--accent);text-decoration:none">🌐 ${club.web}</a>` : ''}
-        ${club.phone ? `<a href="tel:${club.phone.replace(/\s/g,'')}" style="color:var(--muted);text-decoration:none">📞 ${club.phone}</a>` : ''}
+        ${club.social ? `<a href="${club.social.startsWith('http') ? club.social : 'https://' + club.social}" target="_blank" style="color:#4ade80;text-decoration:none">${ic('chat')} ${club.social}</a>` : ''}
+        ${club.web ? `<a href="${club.web.startsWith('http') ? club.web : 'https://' + club.web}" target="_blank" style="color:var(--accent);text-decoration:none">${ic('globe')} ${club.web}</a>` : ''}
+        ${club.phone ? `<a href="tel:${club.phone.replace(/\s/g,'')}" style="color:var(--muted);text-decoration:none">${ic('phone')} ${club.phone}</a>` : ''}
       </div>` : ''}
-      <button class="btn-edit-popup" onclick="openEditClubModal(${club.id})">✏️ ${t('suggestEdit')}</button>
+      <button class="btn-edit-popup" onclick="openEditClubModal(${club.id})">${ic('edit')} ${t('suggestEdit')}</button>
       <div style="margin-top:10px;font-size:0.65rem;color:var(--muted);opacity:0.6">${t('disclaimerShort')}</div>
     </div>
   `;
@@ -3286,9 +3495,11 @@ function openEditModal(barId) {
   document.getElementById('editHours').value = bar.hours || '';
   document.getElementById('editComment').value = '';
   document.getElementById('editModal').style.display = 'flex';
+  dialogOpened('editModal', closeEditModal, 'editModalTitle');
 }
 function closeEditModal() {
   document.getElementById('editModal').style.display = 'none';
+  dialogClosed('editModal');
 }
 function submitEdit() {
   const barId = document.getElementById('editBarId').value;
@@ -3310,7 +3521,7 @@ function submitEdit() {
     if (r.ok) {
       document.querySelector('.edit-modal-box').innerHTML = `
         <div style="text-align:center;padding:2rem 0">
-          <div style="font-size:2rem;margin-bottom:8px">✅</div>
+          <div style="color:var(--success-text);margin-bottom:8px"><svg class="icon" style="width:2rem;height:2rem" aria-hidden="true"><use href="#i-check-circle"/></svg></div>
           <h3 style="color:var(--text)">${t('thankYou')}</h3>
           <p style="color:var(--muted);font-size:0.85rem">${t('editReceived')}</p>
           <button class="edit-modal-submit" onclick="closeEditModal()" style="margin-top:16px">${t('close')}</button>
@@ -3335,9 +3546,11 @@ function openEditClubModal(clubId) {
   document.getElementById('editClubContact').value = club.contact || '';
   document.getElementById('editClubComment').value = '';
   document.getElementById('editClubModal').style.display = 'flex';
+  dialogOpened('editClubModal', closeEditClubModal, 'editClubModalTitle');
 }
 function closeEditClubModal() {
   document.getElementById('editClubModal').style.display = 'none';
+  dialogClosed('editClubModal');
 }
 function submitEditClub() {
   const clubId = document.getElementById('editClubId').value;
@@ -3359,7 +3572,7 @@ function submitEditClub() {
     if (r.ok) {
       document.querySelector('#editClubModal .edit-modal-box').innerHTML = `
         <div style="text-align:center;padding:2rem 0">
-          <div style="font-size:2rem;margin-bottom:8px">✅</div>
+          <div style="color:var(--success-text);margin-bottom:8px"><svg class="icon" style="width:2rem;height:2rem" aria-hidden="true"><use href="#i-check-circle"/></svg></div>
           <h3 style="color:var(--text)">${t('thankYou')}</h3>
           <p style="color:var(--muted);font-size:0.85rem">${t('editReceived')}</p>
           <button class="edit-modal-submit" onclick="closeEditClubModal()" style="margin-top:16px">${t('close')}</button>
@@ -3387,15 +3600,15 @@ function renderList(data) {
     const live = isOpenNow(bar.hours);
     const op = live !== null ? live : bar.open;
     return `
-    <div class="bar-card ${selectedId === bar.id ? 'active' : ''}" id="card-${bar.id}" onclick="selectBar(${bar.id})">
+    <button type="button" class="bar-card ${selectedId === bar.id ? 'active' : ''}" id="card-${bar.id}" onclick="selectBar(${bar.id})" aria-pressed="${selectedId === bar.id}">
       <div class="bar-name">${bar.name}</div>
-      <div class="bar-city">📍 ${bar.city}</div>
+      <div class="bar-city">${ic('pin')} ${bar.city}</div>
       <div class="bar-meta">
-        <span class="badge price">💰 ${bar.price}</span>
-        <span class="badge boards">🎯 ${bar.boards} ${t('boards')}</span>
+        <span class="badge price">${ic('coin')} ${bar.price}</span>
+        <span class="badge boards">${ic('target')} ${bar.boards} ${t('boards')}</span>
         <span class="badge ${op ? 'open' : 'closed'}">${op ? '● ' + t('openLabel') : '● ' + t('closed')}</span>
       </div>
-    </div>`;
+    </button>`;
   }).join('');
 }
 
@@ -3403,8 +3616,12 @@ let activeListView = 'barer';
 
 function showListView(view) {
   activeListView = view;
-  document.getElementById('toggleBarer').classList.toggle('active', view === 'barer');
-  document.getElementById('toggleKlubbar').classList.toggle('active', view === 'klubbar');
+  const bBar = document.getElementById('toggleBarer');
+  const bClub = document.getElementById('toggleKlubbar');
+  bBar.classList.toggle('active', view === 'barer');
+  bClub.classList.toggle('active', view === 'klubbar');
+  bBar.setAttribute('aria-pressed', String(view === 'barer'));
+  bClub.setAttribute('aria-pressed', String(view === 'klubbar'));
   document.getElementById('barList').style.display = view === 'barer' ? '' : 'none';
   document.getElementById('clubList').style.display = view === 'klubbar' ? '' : 'none';
   map.closePopup();
@@ -3439,15 +3656,15 @@ function renderClubList() {
   list.innerHTML = filtered.map(club => {
     const linkedBar = club.barId ? bars.find(b => b.id === club.barId) : null;
     return `
-      <div class="bar-card" onclick="${club.barId ? `selectBar(${club.barId})` : (club.lat ? `map.setView([${club.lat},${club.lng}],13);markers['club-${club.id}'].openPopup()` : '')}">
-        <div class="bar-name" style="color:#4ade80">🏆 ${club.name}</div>
-        <div class="bar-city">📍 ${club.city}${linkedBar ? ` · ${linkedBar.name}` : ''}</div>
+      <button type="button" class="bar-card" onclick="${club.barId ? `selectBar(${club.barId})` : (club.lat ? `map.setView([${club.lat},${club.lng}],13);markers['club-${club.id}'].openPopup()` : '')}">
+        <div class="bar-name" style="color:var(--success-text)">${ic('trophy')} ${club.name}</div>
+        <div class="bar-city">${ic('pin')} ${club.city}${linkedBar ? ` · ${linkedBar.name}` : ''}</div>
         <div class="bar-meta">
-          ${club.boards ? `<span class="badge boards">🎯 ${club.boards} ${t('boards')}</span>` : ''}
-          <span class="badge boards">📅 ${club.day} ${club.time}</span>
-          ${club.price ? `<span class="badge price">💰 ${club.price}</span>` : ''}
+          ${club.boards ? `<span class="badge boards">${ic('target')} ${club.boards} ${t('boards')}</span>` : ''}
+          <span class="badge boards">${ic('calendar')} ${club.day} ${club.time}</span>
+          ${club.price ? `<span class="badge price">${ic('coin')} ${club.price}</span>` : ''}
         </div>
-      </div>
+      </button>
     `;
   }).join('');
 }
@@ -3486,10 +3703,39 @@ function setFilter(f, el) {
   filterBars();
 }
 
-function setCity(city, el) {
+function renderCityFilter() {
+  const row = document.getElementById('cityRow');
+  const sel = document.getElementById('citySelect');
+  if (!row || !sel) return;
+
+  const counts = {};
+  bars.forEach(b => { counts[b.city] = (counts[b.city] || 0) + 1; });
+  clubs.forEach(c => { if (c.barId === null) counts[c.city] = (counts[c.city] || 0) + 1; });
+
+  const alfabetiskt = Object.keys(counts).sort((a, b) => a.localeCompare(b, 'sv'));
+  const topp = Object.keys(counts)
+    .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b, 'sv'))
+    .slice(0, 6);
+
+  const chip = (city, label, count) =>
+    `<button type="button" class="filter-chip city-chip${activeCity === city ? ' active' : ''}"` +
+    ` data-city="${city}" aria-pressed="${activeCity === city}" onclick="setCity(this.dataset.city)">` +
+    `${label}${count ? ` <span class="chip-count">${count}</span>` : ''}</button>`;
+
+  row.innerHTML = chip('alla', t('allCities'), 0) +
+    topp.map(c => chip(c, c, counts[c])).join('');
+
+  const iTopp = activeCity === 'alla' || topp.includes(activeCity);
+  sel.innerHTML = `<option value="">${t('moreCities')}</option>` +
+    alfabetiskt.map(c =>
+      `<option value="${c}"${!iTopp && activeCity === c ? ' selected' : ''}>${c} (${counts[c]})</option>`
+    ).join('');
+}
+
+function setCity(city) {
+  if (!city) return;
   activeCity = city;
-  document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
+  renderCityFilter();
   // Flyg till rätt stad
   const cityCoords = {
     'Göteborg': [[57.708, 11.965], 12],
@@ -3551,9 +3797,21 @@ function setCity(city, el) {
     'Vimmerby': [[57.663, 15.899], 13],
   };
   const cc = cityCoords[city];
-  if (cc) map.flyTo(cc[0], cc[1], {duration:1});
-  else map.flyTo([59.0, 15.0], 6, {duration:1});
-  filterBars();
+  if (cc) {
+    map.flyTo(cc[0], cc[1], {duration:1});
+  } else if (city !== 'alla') {
+    // Ny stad utan handplockade koordinater: rama in dess stallen fran datan
+    const punkter = [
+      ...bars.filter(b => b.city === city),
+      ...clubs.filter(c => c.barId === null && c.city === city)
+    ].filter(v => v.lat).map(v => [v.lat, v.lng]);
+    if (punkter.length) map.flyToBounds(L.latLngBounds(punkter).pad(0.4), {duration:1, maxZoom:14});
+    else map.flyTo([59.0, 15.0], 6, {duration:1});
+  } else {
+    map.flyTo([59.0, 15.0], 6, {duration:1});
+  }
+  if (activeListView === 'klubbar') renderClubList();
+  else filterBars();
 }
 
 function distKm(lat1,lng1,lat2,lng2) {
@@ -3597,28 +3855,38 @@ function updateStats() {
 // ──────────────────────────────────────────
 // LOCATE USER
 // ──────────────────────────────────────────
-function toggleMapTheme() {
-  if (isDarkMap) {
-    map.removeLayer(darkTile);
-    lightTile.addTo(map);
-    document.getElementById('themeToggle').textContent = '🌙';
-  } else {
-    map.removeLayer(lightTile);
-    darkTile.addTo(map);
-    document.getElementById('themeToggle').textContent = '☀️';
+// Temat galler hela granssnittet, inte bara kartan
+function applyTheme(mode) {
+  const dark = mode !== 'light';
+  isDarkMap = dark;
+
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+
+  if (map) {
+    if (dark) {
+      if (map.hasLayer(lightTile)) map.removeLayer(lightTile);
+      if (!map.hasLayer(darkTile)) darkTile.addTo(map);
+    } else {
+      if (map.hasLayer(darkTile)) map.removeLayer(darkTile);
+      if (!map.hasLayer(lightTile)) lightTile.addTo(map);
+    }
   }
-  isDarkMap = !isDarkMap;
-  localStorage.setItem('dartkartan-theme', isDarkMap ? 'dark' : 'light');
+
+  const use = document.getElementById('themeIconUse');
+  if (use) use.setAttribute('href', dark ? '#i-sun' : '#i-moon');
+
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.setAttribute('aria-label', dark ? 'Byt till ljust tema' : 'Byt till mörkt tema');
+}
+
+function toggleTheme() {
+  const nytt = isDarkMap ? 'light' : 'dark';
+  localStorage.setItem('dartkartan-theme', nytt);
+  applyTheme(nytt);
 }
 
 function applyStoredTheme() {
-  const stored = localStorage.getItem('dartkartan-theme');
-  if (stored === 'light') {
-    map.removeLayer(darkTile);
-    lightTile.addTo(map);
-    document.getElementById('themeToggle').textContent = '🌙';
-    isDarkMap = false;
-  }
+  applyTheme(localStorage.getItem('dartkartan-theme') || 'dark');
 }
 
 function locateUser() {
@@ -3643,8 +3911,15 @@ function locateUser() {
 // ──────────────────────────────────────────
 // MODAL
 // ──────────────────────────────────────────
-function openModal()  { document.getElementById('modalOverlay').classList.add('open'); switchFormTab('bar'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+  switchFormTab('bar');
+  dialogOpened('modalOverlay', closeModal, 'formTabBar');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  dialogClosed('modalOverlay');
+}
 
 function switchFormTab(tab) {
   document.getElementById('formTabBar').classList.toggle('active', tab === 'bar');
@@ -3777,10 +4052,65 @@ function submitBar(e) {
 // modal stängs BARA via kryss-knappen (inte vid klick utanför)
 
 // ──────────────────────────────────────────
+// DIALOGER: Escape, fokusfalla, scroll-las
+// ──────────────────────────────────────────
+const openDialogs = [];
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+function dialogOpened(id, closeFn, labelledBy) {
+  const el = document.getElementById(id);
+  if (!el || openDialogs.some(d => d.el === el)) return;
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  if (labelledBy) el.setAttribute('aria-labelledby', labelledBy);
+  openDialogs.push({ el, closeFn, prevFocus: document.activeElement });
+  document.body.classList.add('modal-open');
+  const forsta = [...el.querySelectorAll(FOCUSABLE)].find(f => f.offsetParent !== null);
+  if (forsta) setTimeout(() => forsta.focus(), 0);
+}
+
+function dialogClosed(id) {
+  const el = document.getElementById(id);
+  const i = openDialogs.findIndex(d => d.el === el);
+  if (i === -1) return;
+  const [d] = openDialogs.splice(i, 1);
+  if (!openDialogs.length) document.body.classList.remove('modal-open');
+  if (d.prevFocus && typeof d.prevFocus.focus === 'function') d.prevFocus.focus();
+}
+
+document.addEventListener('keydown', e => {
+  if (!openDialogs.length) return;
+  const top = openDialogs[openDialogs.length - 1];
+
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    top.closeFn();
+    return;
+  }
+  if (e.key !== 'Tab') return;
+
+  // Hall fokus kvar i den oversta dialogen
+  const items = [...top.el.querySelectorAll(FOCUSABLE)].filter(f => f.offsetParent !== null);
+  if (!items.length) return;
+  const forsta = items[0];
+  const sista = items[items.length - 1];
+  const inne = top.el.contains(document.activeElement);
+
+  if (e.shiftKey && (document.activeElement === forsta || !inne)) {
+    e.preventDefault();
+    sista.focus();
+  } else if (!e.shiftKey && (document.activeElement === sista || !inne)) {
+    e.preventDefault();
+    forsta.focus();
+  }
+});
+
+// ──────────────────────────────────────────
 // BOOT
 // ──────────────────────────────────────────
 window.addEventListener('load', () => {
   initMap();
+  renderCityFilter();
   renderList(bars);
   initMobileToggle();
   initZoomLock();
@@ -3942,11 +4272,13 @@ function openScorer() {
   document.getElementById('scorerOverlay').style.display = 'block';
   renderPlayerAvatars();
   renderPlayerNameInputs();
+  dialogOpened('scorerOverlay', closeScorer);
 }
 function closeScorer() {
   const ov = document.getElementById('scorerOverlay');
   ov.style.display = 'none';
   ov.scrollTop = 0;
+  dialogClosed('scorerOverlay');
 }
 
 let team1 = [''], team2 = [''];
@@ -4065,15 +4397,15 @@ function renderPlayerAvatars() {
   for (let i = 0; i < scorerNumPlayers; i++) {
     const nm = singelNames[i] || scorerPlayers[i]?.name || `Spelare ${i+1}`;
     html += `<div class="player-avatar" style="position:relative">
-      <div class="player-avatar-circle" onclick="renameSingelPlayer(${i})" style="cursor:pointer" title="Klicka för att byta namn">${icons[i] || '🎯'}</div>
+      <button type="button" class="player-avatar-circle" onclick="renameSingelPlayer(${i})" style="cursor:pointer" title="Klicka för att byta namn" aria-label="Byt namn på ${nm}">${icons[i] || '🎯'}</button>
       <div class="player-avatar-name" id="avatarName_${i}">${nm}</div>
-      ${scorerNumPlayers > 1 ? `<button onclick="event.stopPropagation();removePlayer(${i})" style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--accent2);border:2px solid var(--surface);color:white;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">✕</button>` : ''}
+      ${scorerNumPlayers > 1 ? `<button type="button" aria-label="Ta bort ${nm}" onclick="event.stopPropagation();removePlayer(${i})" style="position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--accent2);border:2px solid var(--surface);color:white;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1">✕</button>` : ''}
     </div>`;
   }
   if (scorerNumPlayers < 6) {
-    html += `<div class="player-avatar" onclick="addPlayer()">
-      <div class="player-avatar-circle add">+</div>
-    </div>`;
+    html += `<button type="button" class="player-avatar" onclick="addPlayer()" aria-label="Lägg till spelare" style="background:none;border:none;padding:0">
+      <span class="player-avatar-circle add">+</span>
+    </button>`;
   }
   c.innerHTML = html;
 }
